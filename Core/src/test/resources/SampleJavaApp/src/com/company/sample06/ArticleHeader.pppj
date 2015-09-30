@@ -1,0 +1,21 @@
+{
+  "subTemplateFields" : [
+    "author",
+    "headLine",
+    "datePublished",
+    "url"
+  ],
+  "linkTo" : "Article.pppj",
+  "artifacts": [
+    {
+      "type": "Interface",
+      "name": "IArticleHeader",
+      "isReadOnly" : false
+    },
+    {
+      "type": "Interface",
+      "name": "IArticleHeaderRO",
+      "isReadOnly" : true
+    }
+  ]
+}

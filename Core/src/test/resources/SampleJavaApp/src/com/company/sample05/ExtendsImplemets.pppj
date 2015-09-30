@@ -1,0 +1,18 @@
+{
+  "fields": {
+    "employeeNumber": "int",
+    "department": "String",
+    "salary": "double"
+  },
+  "artifacts": [
+    {
+      "type": "Pojo",
+      "name": "Worker",
+      "extend" : "Person1",
+      "implement" : [ "IMyInterface", "ISomeInterface" ]
+    }
+  ],
+  "options" : {
+    "imports" : [ "com.company.sample01.Person1" ]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "fields": {
+    "firstName": "String",
+    "lastName": "String",
+    "Age": "int",
+    "personalFile" :"File",
+    "myFavoritePerson" : "Person1"
+  },
+  "artifacts": [
+    {
+      "type": "Pojo",
+      "name": "Person7"
+    }
+  ],
+  "options": {
+    "encapsulateFields" : false,
+    "imports" : [
+      "java.io.*",
+      "com.company.sample01.Person1"
+    ]
+  }
+}

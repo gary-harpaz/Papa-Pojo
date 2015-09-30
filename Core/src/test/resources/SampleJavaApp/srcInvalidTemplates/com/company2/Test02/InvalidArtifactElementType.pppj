@@ -1,0 +1,8 @@
+{
+  "fields": {
+    "firstName": "String",
+    "lastName": "String",
+    "Age": "int"
+  },
+  "artifacts": [ 1 ]
+}

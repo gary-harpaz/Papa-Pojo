@@ -1,0 +1,4 @@
+rootProject.name = 'PapaPojo'
+include 'Core'
+//findProject(':Core')?.name = 'papa-pojo.core'
+

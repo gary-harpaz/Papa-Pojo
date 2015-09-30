@@ -1,0 +1,13 @@
+{
+  "fields": {
+    "FirstName": "String",
+    "LastName": "String",
+    "Age": "int"
+  },
+  "artifacts": [
+    {
+      "type": "Pojo",
+      "name": "stam"
+    }
+  ]
+}
