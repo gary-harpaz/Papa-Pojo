@@ -51,11 +51,11 @@ public class PojoArtifact extends ClassArtifactBase {
         for (SchemaField schemaField : this.getSchema().getFields()) {
             bufferedWriter.append("public ")
                     .append(schemaField.getType()).append(" ")
-                    .append(formatProperty(getterPrefix, schemaField.getName(), encapsulationCapitalization))
+                    .append(capitalizeName(getterPrefix, schemaField.getName(), encapsulationCapitalization))
                     .append("() { return ").append(privateFieldPrefix).append(schemaField.getName())
                     .append("; }").append(System.lineSeparator());
             bufferedWriter.append("public void ")
-                    .append(formatProperty(setterPrefix, schemaField.getName(),encapsulationCapitalization))
+                    .append(capitalizeName(setterPrefix, schemaField.getName(), encapsulationCapitalization))
                     .append("(").append(schemaField.getType()).append(" ").append(schemaField.getName())
                     .append(") { this.").append(privateFieldPrefix).append(schemaField.getName())
                     .append(" = ").append(schemaField.getName()).append("; }").append(System.lineSeparator());
@@ -63,28 +63,15 @@ public class PojoArtifact extends ClassArtifactBase {
     }
 
     private void writeUnencapsulatedField(BufferedWriter bufferedWriter) throws IOException {
+        CapitalizationTypes capitalization=getOptions().getPublicFieldCapitalization();
         for (SchemaField schemaField : this.getSchema().getFields()) {
             bufferedWriter.append("public ")
                     .append(schemaField.getType())
-                    .append(" ").append(schemaField.getName())
+                    .append(" ").append(capitalizeName("", schemaField.getName(), capitalization))
                     .append(";").append(System.lineSeparator());
         }
     }
 
-    private void CapitalizeFirstLetter(String str, StringBuilder builder) {
-        if (str.length()>0) {
-            builder.append(Character.toUpperCase(str.charAt(0)));
-
-            for (int i = 1; i < str.length(); i++) {
-                builder.append(str.charAt(i));
-            }
-        }
-    }
-    private String CapitalizeFirstLetter(String str) {
-        StringBuilder builder=new StringBuilder();
-        CapitalizeFirstLetter(str, builder);
-        return builder.toString();
-    }
 
 
 

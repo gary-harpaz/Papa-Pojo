@@ -21,6 +21,7 @@ public class ArtifactOptions extends MapChain {
         defaultProperties.put(Fields.privateFieldPrefix.toString(),"_");
         defaultProperties.put(Fields.encapsulateFields.toString(),true);
         defaultProperties.put(Fields.propertyCapitalization.toString(),CapitalizationTypes.camelCase);
+        defaultProperties.put(Fields.publicFieldCapitalization.toString(),CapitalizationTypes.camelCase);
         defaultProperties.put(Fields.getterPrefix.toString(),"get");
         defaultProperties.put(Fields.setterPrefix.toString(),"set");
 
@@ -77,6 +78,10 @@ public class ArtifactOptions extends MapChain {
         return getValue(Fields.undefinedMember);
     }
 
+    public CapitalizationTypes getPublicFieldCapitalization() {
+        return getValue(Fields.publicFieldCapitalization);
+    }
+
     public enum Fields {
         Unknown(null),
         imports(String[].class),
@@ -86,6 +91,7 @@ public class ArtifactOptions extends MapChain {
         getterPrefix(String.class),
         setterPrefix(String.class),
         enumCapitalization(CapitalizationTypes.class),
+        publicFieldCapitalization(CapitalizationTypes.class),
         undefinedMember(String.class),
         constantMemberCapitalization(CapitalizationTypes.class),
         constantValueCapitalization(CapitalizationTypes.class);

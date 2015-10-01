@@ -89,14 +89,14 @@ public abstract class ArtifactBase implements IArtifactParent {
     }
 
 
-    public static String formatProperty(String prefix, String name, CapitalizationTypes encapsulationCapitalization) {
+    public static String capitalizeName(String prefix, String name, CapitalizationTypes capitalization) {
         StringBuilder stringBuilder=new StringBuilder();
-        formatProperty(prefix,name,encapsulationCapitalization,stringBuilder);
+        capitalizeName(prefix, name, capitalization, stringBuilder);
         return stringBuilder.toString();
     }
-    public static void formatProperty(String prefix, String name, CapitalizationTypes encapsulationCapitalization, StringBuilder stringBuilder) {
+    public static void capitalizeName(String prefix, String name, CapitalizationTypes capitalization, StringBuilder stringBuilder) {
         int initialLength=stringBuilder.length();
-        switch (encapsulationCapitalization) {
+        switch (capitalization) {
             case  ALL_CAPS:
                 appendAllCaps(stringBuilder,initialLength,prefix,name);
                 break;
@@ -122,8 +122,7 @@ public abstract class ArtifactBase implements IArtifactParent {
                 continue;
             for (int i=0; i<word.length(); i++){
                 char current=word.charAt(i);
-                if (Character.isUpperCase(current) ||
-                        (i==0 && stringBuilder.length()>initialCharNum))
+                if ((Character.isUpperCase(current) || i==0) && stringBuilder.length()>initialCharNum)
                     stringBuilder.append("_");
                 stringBuilder.append(Character.toUpperCase(current));
 

@@ -16,6 +16,12 @@
       "name": "Person2",
       "propertyCapitalization" : "PascalCase",
       "getterPrefix" : "getterOverride"
+    },
+    {
+      "type": "Pojo",
+      "name": "Person3",
+      "encapsulateFields" : false,
+      "publicFieldCapitalization" : "ALL_CAPS"
     }
   ],
   "options" : {

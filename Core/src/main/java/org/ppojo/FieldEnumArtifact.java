@@ -48,6 +48,6 @@ public class FieldEnumArtifact extends ArtifactBase {
     }
 
     private void appendEnumMember(String name, CapitalizationTypes encapsulationCapitalization, StringBuilder stringBuilder) {
-        formatProperty("",name,encapsulationCapitalization,stringBuilder);
+        capitalizeName("", name, encapsulationCapitalization, stringBuilder);
     }
 }

@@ -54,11 +54,11 @@ public class InterfaceArtifact extends ArtifactBase{
         for (SchemaField schemaField : this.getSchema().getFields()) {
             bufferedWriter
                     .append(schemaField.getType()).append(" ")
-                    .append(formatProperty(getterPrefix, schemaField.getName(), encapsulationCapitalization))
+                    .append(capitalizeName(getterPrefix, schemaField.getName(), encapsulationCapitalization))
                     .append("();").append(System.lineSeparator());
             if (!_isReadOnly) {
                 bufferedWriter.append("void ")
-                        .append(formatProperty(setterPrefix, schemaField.getName(),encapsulationCapitalization))
+                        .append(capitalizeName(setterPrefix, schemaField.getName(), encapsulationCapitalization))
                         .append("(").append(schemaField.getType()).append(" ").append(schemaField.getName())
                         .append(");").append(System.lineSeparator());
             }

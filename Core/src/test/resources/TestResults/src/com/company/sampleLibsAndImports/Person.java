@@ -7,10 +7,10 @@ import com.company.sampleNamingOptions.Person2;
 
 public class Person {
 
-public String firstName;
-public String lastName;
-public File personalFile;
-public int Age;
-public Person2 myFavoritePerson;
+    public String firstName;
+    public String lastName;
+    public File personalFile;
+    public int age;
+    public Person2 myFavoritePerson;
 
 }

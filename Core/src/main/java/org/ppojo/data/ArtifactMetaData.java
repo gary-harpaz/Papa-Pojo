@@ -34,6 +34,7 @@ public class ArtifactMetaData {
 
         Set<ArtifactOptions.Fields> supportsOptions=new HashSet<>();
         supportsOptions.add(ArtifactOptions.Fields.propertyCapitalization);
+        supportsOptions.add(ArtifactOptions.Fields.publicFieldCapitalization);
         supportsOptions.add(ArtifactOptions.Fields.encapsulateFields);
         supportsOptions.add(ArtifactOptions.Fields.getterPrefix);
         supportsOptions.add(ArtifactOptions.Fields.imports);

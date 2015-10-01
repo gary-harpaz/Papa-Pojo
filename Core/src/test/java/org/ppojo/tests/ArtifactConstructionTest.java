@@ -26,6 +26,7 @@ public class ArtifactConstructionTest {
         defaultProperties.put(ArtifactOptions.Fields.privateFieldPrefix.toString(),"_");
         defaultProperties.put(ArtifactOptions.Fields.encapsulateFields.toString(),true);
         defaultProperties.put(ArtifactOptions.Fields.propertyCapitalization.toString(),CapitalizationTypes.camelCase);
+        defaultProperties.put(ArtifactOptions.Fields.publicFieldCapitalization.toString(),CapitalizationTypes.camelCase);
         defaultProperties.put(ArtifactOptions.Fields.getterPrefix.toString(),"get");
         defaultProperties.put(ArtifactOptions.Fields.setterPrefix.toString(),"set");
         _defaultOptions=new ArtifactOptions("Default",defaultProperties,null);
@@ -47,6 +48,7 @@ public class ArtifactConstructionTest {
         assertArtifact("sampleSimplePojo\\Person.java");
         assertArtifact("sampleNamingOptions\\Person1.java");
         assertArtifact("sampleNamingOptions\\Person2.java");
+        assertArtifact("sampleNamingOptions\\Person3.java");
         assertArtifact("sampleRelativeOutputPath\\Person3.java");
         assertArtifact("sampleRelativeOutputPath\\S1\\S2\\Person1.java");
         assertArtifact("Person2.java");
