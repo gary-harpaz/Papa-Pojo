@@ -44,17 +44,17 @@ public class ArtifactConstructionTest {
                 ArrayListBuilder.<ITemplateFileQuery>newArrayList(query).create(),
                 _defaultOptions);
 
-        assertArtifact("sample01\\Person1.java");
-        assertArtifact("sample02\\Person2.java");
-        assertArtifact("sample02\\Person3.java");
-        assertArtifact("sample03\\Person6.java");
-        assertArtifact("sample03\\S1\\S2\\Person4.java");
-        assertArtifact("Person5.java");
-        assertArtifact("sample04\\Person7.java");
-        assertArtifact("sample05\\Worker.java");
-        assertArtifact("sample06\\Article.java");
-        assertArtifact("sample06\\IArticleHeader.java");
-        assertArtifact("sample06\\IArticleHeaderRO.java");
+        assertArtifact("sampleSimplePojo\\Person.java");
+        assertArtifact("sampleNamingOptions\\Person1.java");
+        assertArtifact("sampleNamingOptions\\Person2.java");
+        assertArtifact("sampleRelativeOutputPath\\Person3.java");
+        assertArtifact("sampleRelativeOutputPath\\S1\\S2\\Person1.java");
+        assertArtifact("Person2.java");
+        assertArtifact("sampleLibsAndImports\\Person.java");
+        assertArtifact("sampleExtendsImplements\\Worker.java");
+        assertArtifact("sampleInterface\\Article.java");
+        assertArtifact("sampleInterface\\IArticleHeader.java");
+        assertArtifact("sampleInterface\\IArticleHeaderRO.java");
 
         
     }

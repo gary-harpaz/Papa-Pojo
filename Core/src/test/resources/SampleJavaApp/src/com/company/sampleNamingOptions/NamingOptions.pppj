@@ -1,0 +1,24 @@
+{
+  "fields": {
+    "firstName": "String",
+    "lastName": "String",
+    "Age": "int"
+  },
+  "artifacts": [
+    {
+      "type": "Pojo",
+      "name": "Person1",
+      "setterPrefix" : "mySetter",
+      "privateFieldPrefix" : "m_"
+    },
+    {
+      "type": "Pojo",
+      "name": "Person2",
+      "propertyCapitalization" : "PascalCase",
+      "getterPrefix" : "getterOverride"
+    }
+  ],
+  "options" : {
+    "getterPrefix" : ""
+  }
+}
