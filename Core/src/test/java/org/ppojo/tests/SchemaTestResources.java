@@ -15,12 +15,8 @@ public class SchemaTestResources {
     public static final String srcFolder="src";
     public static final String rootPackagePath="com\\company";
     public static final String testResultsFolder="TestResults";
-//    public static final String MainSourcesFolder=SampleJavaApp+"\\src";
-//    public static final String MainSourcesFolder= Paths.get(SampleJavaApp).resolve(srcFolder).toString();
-public static final String MainSourcesFolder= Paths.get(SampleJavaApp, srcFolder).toString();
-//    public static final String MainPackageFolder= Paths.get(MainSourcesFolder,"com\\company").toString();
-//    public static final String MainPackageFolder= Paths.get(MainSourcesFolder).resolve(rootPackagePath).toString();
-public static final String MainPackageFolder= Paths.get(MainSourcesFolder, rootPackagePath).toString();
+    public static final String MainSourcesFolder= Paths.get(SampleJavaApp, srcFolder).toString();
+    public static final String MainPackageFolder= Paths.get(MainSourcesFolder, rootPackagePath).toString();
     public static final String TestResultsMainPackageFolder=Paths.get(testResultsFolder,srcFolder,rootPackagePath).toString();
 
     public static final String BadTemplateRootFolder=SampleJavaApp+"\\srcBadTemplates\\com\\company2";
