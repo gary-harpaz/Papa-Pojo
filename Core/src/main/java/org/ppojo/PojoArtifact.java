@@ -80,10 +80,35 @@ public class PojoArtifact extends ClassArtifactBase {
 
     @Override
     public void writeArtifactContent(BufferedWriter bufferedWriter) throws IOException {
+        writeConstructors(bufferedWriter);
         if (!_encapsulateFields)
             writeUnencapsulatedField(bufferedWriter);
         else
             writeEncapsulatedFields(bufferedWriter);
+    }
+
+    private void writeConstructors(BufferedWriter bufferedWriter) throws IOException {
+         //boolean hasCopyConstructor =getOptions().hasCopyConstructor();
+        boolean hasCopyConstructor =false;
+        if (hasCopyConstructor) {
+            setCurrentIndent(1);
+            bufferedWriter.append(getIndent())
+                    .append("public ").append(this.getName()).append("() {").append(System.lineSeparator());
+            bufferedWriter.append(getIndent()).append("}").append(System.lineSeparator());;
+            bufferedWriter.write(System.lineSeparator());
+
+            bufferedWriter.append("public ").append(this.getName()).append("(").append(getName()).append(" source) {").append(System.lineSeparator());
+            setCurrentIndent(2);
+            for (SchemaField schemaField : this.getSchema().getFields()) {
+
+
+            }
+            setCurrentIndent(1);
+            bufferedWriter.append(getIndent()).append("}").append(System.lineSeparator());;
+            bufferedWriter.write(System.lineSeparator());
+
+        }
+
     }
 
     private void writeEncapsulatedFields(BufferedWriter bufferedWriter) throws IOException {

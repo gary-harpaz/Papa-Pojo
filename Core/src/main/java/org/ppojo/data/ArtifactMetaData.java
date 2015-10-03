@@ -41,7 +41,8 @@ public class ArtifactMetaData {
         supportsOptions.add(ArtifactOptions.Fields.imports);
         supportsOptions.add(ArtifactOptions.Fields.privateFieldPrefix);
         supportsOptions.add(ArtifactOptions.Fields.setterPrefix);
-        NewMetaData(ArtifactTypes.Pojo, ClassArtifactData.class,supportsOptions);
+        supportsOptions.add(ArtifactOptions.Fields.pojoCopyStyles);
+        NewMetaData(ArtifactTypes.Pojo, ClassArtifactData.class, supportsOptions);
 
         supportsOptions=new HashSet<>();
         supportsOptions.add(ArtifactOptions.Fields.indentString);

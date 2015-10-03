@@ -67,8 +67,9 @@ public class ArtifactSerializer  implements JsonDeserializer<ArtifactData> {
             if (elementType==JsonElementTypes.JsonArray)
             {
                 for (JsonElement arrayElement : entry.getValue().getAsJsonArray()) {
-                    if (JsonElementTypes.getType(arrayElement)!=JsonElementTypes.String)
-                        throw new JsonArrayMixedItemTypes("Invalid json array property "+entry.getKey()+" of artifact "+artifactName+". Item types must all be String items. in "+ getDeserializeFilePath());
+                    JsonElementTypes arrayElementType=JsonElementTypes.getType(arrayElement);
+                    if (arrayElementType!=JsonElementTypes.String && arrayElementType!=JsonElementTypes.JsonObject)
+                        throw new JsonArrayMixedItemTypes("Invalid json array property "+entry.getKey()+" of artifact "+artifactName+". Item types must all be String o JsonObject items. in "+ getDeserializeFilePath());
                 }
             }
         }

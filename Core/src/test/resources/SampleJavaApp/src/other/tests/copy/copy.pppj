@@ -1,0 +1,19 @@
+{
+  "fields": {
+    "firstName": "String",
+    "lastName": "String",
+    "Age": "int"
+  },
+  "artifacts": [
+    {
+      "type": "Pojo",
+      "name" : "Person",
+      "pojoCopyStyles" : [ "copyConstructor" , "staticMethod" ,
+        {
+          "style" : "staticFactory"
+        }
+      ]
+
+    }
+  ]
+}

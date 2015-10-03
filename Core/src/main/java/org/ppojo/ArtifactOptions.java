@@ -1,5 +1,6 @@
 package org.ppojo;
 
+import org.ppojo.data.CopyStyleData;
 import org.ppojo.utils.EmptyArray;
 import org.ppojo.utils.EnumParser;
 import org.ppojo.utils.MapChain;
@@ -31,6 +32,7 @@ public class ArtifactOptions extends MapChain {
         defaultProperties.put(ArtifactOptions.Fields.constantMemberCapitalization.toString(),CapitalizationTypes.ALL_CAPS);
         defaultProperties.put(ArtifactOptions.Fields.constantValueCapitalization.toString(),CapitalizationTypes.camelCase);
         defaultProperties.put(ArtifactOptions.Fields.indentString.toString(),"    ");
+        defaultProperties.put(ArtifactOptions.Fields.pojoCopyStyles.toString(),EmptyArray.get(CopyStyleData.class));
         _defaultOptions=new ArtifactOptions("Default",defaultProperties,null);
     }
     public ArtifactOptions(String name,@Nullable Map<String,Object> localProperties, @Nullable ArtifactOptions parent) {
@@ -129,7 +131,9 @@ public class ArtifactOptions extends MapChain {
         privateFieldName(String.class),
         constantMemberCapitalization(CapitalizationTypes.class),
         constantValueCapitalization(CapitalizationTypes.class),
-        indentString(String.class);
+        indentString(String.class),
+        pojoCopyStyles(CopyStyleData[].class)
+        ;
 
 
         private final Class _optionType;
@@ -140,7 +144,8 @@ public class ArtifactOptions extends MapChain {
 
         Fields(Class optionType) {
             _optionType =optionType;
-            if (_optionType==null || _optionType.isPrimitive() || _optionType.isEnum() || _optionType==String.class)
+            if (_optionType==null || _optionType.isPrimitive() || _optionType.isEnum() || _optionType==String.class
+                    || _optionType==CopyStyleData[].class) //TODO define formatter for this
                 _valueFormatter=Fields::DefaultFormatter;
             else
                 if (_optionType==String[].class)

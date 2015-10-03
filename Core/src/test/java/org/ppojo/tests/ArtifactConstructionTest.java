@@ -3,6 +3,7 @@ package org.ppojo.tests;
 import org.junit.Assert;
 import org.junit.Test;
 import org.ppojo.*;
+import org.ppojo.data.CopyStyleData;
 import org.ppojo.utils.ArrayListBuilder;
 import org.ppojo.utils.EmptyArray;
 import org.ppojo.utils.Helpers;
@@ -35,6 +36,7 @@ public class ArtifactConstructionTest {
         defaultProperties.put(ArtifactOptions.Fields.constantMemberCapitalization.toString(),CapitalizationTypes.ALL_CAPS);
         defaultProperties.put(ArtifactOptions.Fields.constantValueCapitalization.toString(),CapitalizationTypes.camelCase);
         defaultProperties.put(ArtifactOptions.Fields.indentString.toString(),"    ");
+        defaultProperties.put(ArtifactOptions.Fields.pojoCopyStyles.toString(),EmptyArray.get(CopyStyleData.class));
         return defaultProperties;
     }
     private static ArtifactOptions _defaultOptions=new ArtifactOptions("Default",newDefaultProperties(),null);;

@@ -18,11 +18,13 @@ public class Serializer {
     public Serializer() {
         _templateSerializer=new TemplateSerializer(this);
         _artifactSerializer=new ArtifactSerializer(this);
+        _copyStyleDataSerializer=new CopyStyleDataSerializer(this);
 
         CreateNewSerializer();
     }
     private final TemplateSerializer _templateSerializer;
     private final ArtifactSerializer _artifactSerializer;
+    private final CopyStyleDataSerializer _copyStyleDataSerializer;
     private Gson _gsonCustomized;
     private Gson _gsonRegular;
 
@@ -37,6 +39,7 @@ public class Serializer {
         _classToJsonElementType.put(String[].class,JsonElementTypes.JsonArray);
         _classToJsonElementType.put(CapitalizationTypes.class,JsonElementTypes.String);
         _classToJsonElementType.put(ArtifactData[].class,JsonElementTypes.JsonArray);
+        _classToJsonElementType.put(CopyStyleData[].class, JsonElementTypes.JsonArray);
 
     }
 
@@ -79,6 +82,7 @@ public class Serializer {
         GsonBuilder builder=new GsonBuilder();
         builder.registerTypeAdapter(ArtifactData.class,_artifactSerializer);
         builder.registerTypeAdapter(TemplateFileData.class,_templateSerializer);
+        builder.registerTypeAdapter(CopyStyleData[].class,_copyStyleDataSerializer);
         builder= getIsPretty()?builder.setPrettyPrinting():builder;
         _gsonCustomized =builder.create();
 
@@ -87,6 +91,10 @@ public class Serializer {
         _gsonRegular =builder.create();
         _artifactSerializer.setGson(_gsonRegular);
         _templateSerializer.setGson(_gsonRegular);
+        _copyStyleDataSerializer.setGson(_gsonRegular);
+
+
+
 
     }
 
