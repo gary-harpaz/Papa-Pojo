@@ -1,12 +1,12 @@
 package org.ppojo;
 
+import org.ppojo.utils.EmptyArray;
 import org.ppojo.utils.EnumParser;
 import org.ppojo.utils.MapChain;
 import org.ppojo.utils.MapChainValue;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -18,21 +18,46 @@ public class ArtifactOptions extends MapChain {
 
     static  {
         Map<String,Object> defaultProperties=new HashMap<>();
-        defaultProperties.put(Fields.privateFieldPrefix.toString(),"_");
-        defaultProperties.put(Fields.encapsulateFields.toString(),true);
-        defaultProperties.put(Fields.propertyCapitalization.toString(),CapitalizationTypes.camelCase);
-        defaultProperties.put(Fields.publicFieldCapitalization.toString(),CapitalizationTypes.camelCase);
-        defaultProperties.put(Fields.getterPrefix.toString(),"get");
-        defaultProperties.put(Fields.setterPrefix.toString(),"set");
-
+        defaultProperties.put(ArtifactOptions.Fields.privateFieldPrefix.toString(),"_");
+        defaultProperties.put(ArtifactOptions.Fields.encapsulateFields.toString(),true);
+        defaultProperties.put(ArtifactOptions.Fields.propertyCapitalization.toString(),CapitalizationTypes.camelCase);
+        defaultProperties.put(ArtifactOptions.Fields.publicFieldCapitalization.toString(),CapitalizationTypes.camelCase);
+        defaultProperties.put(ArtifactOptions.Fields.getterPrefix.toString(),"get");
+        defaultProperties.put(ArtifactOptions.Fields.setterPrefix.toString(),"set");
+        defaultProperties.put(ArtifactOptions.Fields.privateFieldName.toString(),"data");
+        defaultProperties.put(ArtifactOptions.Fields.imports.toString(), EmptyArray.get(String.class));
+        defaultProperties.put(ArtifactOptions.Fields.enumCapitalization.toString(),CapitalizationTypes.camelCase);
+        defaultProperties.put(ArtifactOptions.Fields.undefinedMember.toString(),"");
+        defaultProperties.put(ArtifactOptions.Fields.constantMemberCapitalization.toString(),CapitalizationTypes.ALL_CAPS);
+        defaultProperties.put(ArtifactOptions.Fields.constantValueCapitalization.toString(),CapitalizationTypes.camelCase);
+        defaultProperties.put(ArtifactOptions.Fields.indentString.toString(),"    ");
         _defaultOptions=new ArtifactOptions("Default",defaultProperties,null);
     }
     public ArtifactOptions(String name,@Nullable Map<String,Object> localProperties, @Nullable ArtifactOptions parent) {
         super(name,localProperties, parent);
+        if (parent==null) {
+            if (localProperties==null)
+                throw new NullPointerException("All default options must have values");
+            for (Fields fields : Fields.values()) {
+                Object value=localProperties.get(fields.toString());
+                if (value==null && fields!=Fields.Unknown)
+                    throw new NullPointerException("Default value for "+fields+" can not be null");
+            }
+        }
+        else {
+            if (localProperties!=null) {
+                localProperties.forEach((k,v)->{
+                    if (v==null)
+                        throw new NullPointerException("Null value properties are not allowed "+k.toString()+" value is null");
+                });
+            }
+        }
+
     }
+
+
+
     private static ArtifactOptions _defaultOptions;
-
-
     public static @Nonnull ArtifactOptions getDefaultOptions() {
         return _defaultOptions;
     }
@@ -82,6 +107,14 @@ public class ArtifactOptions extends MapChain {
         return getValue(Fields.publicFieldCapitalization);
     }
 
+    public String getPrivateFieldName() {
+        return getValue(Fields.privateFieldName);
+    }
+
+    public String getIndentString() {
+        return getValue(Fields.indentString);
+    }
+
     public enum Fields {
         Unknown(null),
         imports(String[].class),
@@ -93,8 +126,11 @@ public class ArtifactOptions extends MapChain {
         enumCapitalization(CapitalizationTypes.class),
         publicFieldCapitalization(CapitalizationTypes.class),
         undefinedMember(String.class),
+        privateFieldName(String.class),
         constantMemberCapitalization(CapitalizationTypes.class),
-        constantValueCapitalization(CapitalizationTypes.class);
+        constantValueCapitalization(CapitalizationTypes.class),
+        indentString(String.class);
+
 
         private final Class _optionType;
         public Class getOptionType() {

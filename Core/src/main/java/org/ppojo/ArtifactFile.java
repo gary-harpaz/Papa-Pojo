@@ -2,11 +2,11 @@ package org.ppojo;
 
 import org.ppojo.utils.Helpers;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.net.URI;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by GARY on 9/26/2015.
@@ -24,10 +24,7 @@ public class ArtifactFile implements IArtifactParent {
         return _packageName;
     }
 
-
-
-
-public ArtifactFile(String artifactFileName, String parentSourceRootFolder, @Nullable ArtifactOptions templateOptions) {
+    public ArtifactFile(String artifactFileName, String parentSourceRootFolder, @Nullable ArtifactOptions templateOptions) {
         _artifacts=new ArrayList<>();
         _artifactFileName =artifactFileName;
         URI artifactFolderURI= Paths.get(artifactFileName).getParent().toUri();
@@ -36,7 +33,8 @@ public ArtifactFile(String artifactFileName, String parentSourceRootFolder, @Nul
         if (relativeUti.endsWith("/"))
             relativeUti= Helpers.removeLastOccurrenceOf(relativeUti, "/");
         _packageName= relativeUti.replace("/",".");
-       _options=templateOptions;
+        _options=templateOptions;
+
     }
 
     @Override
@@ -48,7 +46,7 @@ public ArtifactFile(String artifactFileName, String parentSourceRootFolder, @Nul
     public void addChildArtifact(ArtifactBase artifactBase) {
         _artifacts.add(artifactBase);
     }
-    public Iterable<ArtifactBase> getArtifacts() {
+    public @Nonnull Iterable<ArtifactBase> getArtifacts() {
         return _artifacts;
     }
 }

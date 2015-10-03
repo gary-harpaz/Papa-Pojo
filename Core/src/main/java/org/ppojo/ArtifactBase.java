@@ -1,6 +1,7 @@
 package org.ppojo;
 
 import org.ppojo.data.ArtifactMetaData;
+import org.ppojo.utils.EmptyArray;
 import org.ppojo.utils.MapChainValue;
 
 import javax.annotation.Nonnull;
@@ -23,6 +24,8 @@ public abstract class ArtifactBase implements IArtifactParent {
     private final ArtifactOptions _options;
     private final String _name;
     private final Schema _schema;
+    private final String _singleIndent;
+    private String _currentIndent="";
 
     private List<ArtifactBase> _nestedArtifacts;
 
@@ -59,7 +62,23 @@ public abstract class ArtifactBase implements IArtifactParent {
                 name= removeFilenameExtension(Paths.get(artifactFile.getArtifactFileName()).getFileName().toString());
         }
         _name=name;
+        if (!artifactParser.isValid())
+            throw new IllegalStateException("Artifact " + _name + " can not be created with invalid parser. In " + artifactParser.getTemplateFilePath());
         _options=artifactParser.getOptions();
+        _singleIndent =_options.getIndentString();
+    }
+
+
+    public void setCurrentIndent(int level) {
+        StringBuilder stringBuilder=new StringBuilder();
+        for (int i=0; i<level; i++) {
+            stringBuilder.append(_singleIndent);
+        }
+        _currentIndent=stringBuilder.toString();
+    }
+
+    public String getIndent() {
+        return _currentIndent;
     }
 
     @Override
@@ -131,4 +150,7 @@ public abstract class ArtifactBase implements IArtifactParent {
 
     }
 
+    public @Nonnull String[] getMoreImports() {
+        return EmptyArray.get(String.class);
+    }
 }

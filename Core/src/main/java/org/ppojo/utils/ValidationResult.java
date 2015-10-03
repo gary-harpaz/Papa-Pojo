@@ -9,9 +9,11 @@ import java.util.List;
 public class ValidationResult {
     private final List<ValidationWarning> _warnings;
     private final List<ValidationError> _errors;
-    public ValidationResult() {
+    private boolean _throwsExceptionOnFirstErr;
+    public ValidationResult(boolean throwsExceptionOnFirstErr) {
         _warnings=new ArrayList<>();
         _errors=new ArrayList<>();
+        _throwsExceptionOnFirstErr=throwsExceptionOnFirstErr;
 
     }
     public List<ValidationWarning> getWarnings() {
@@ -24,6 +26,8 @@ public class ValidationResult {
 
     public void addError(String message) {
         _errors.add(new ValidationError(message));
+        if (_throwsExceptionOnFirstErr)
+            throw new RuntimeException(message);
 
     }
 

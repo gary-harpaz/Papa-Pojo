@@ -11,7 +11,7 @@ public enum ArtifactTypes {
     Unknown,
     Pojo,
     Interface,
-    ROPojo,
+    ImmutableClass,
     FieldEnum,
     FluentBuilder;
 

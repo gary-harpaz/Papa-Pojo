@@ -30,24 +30,21 @@ public class FieldEnumArtifact extends ArtifactBase {
     public void writeArtifactContent(BufferedWriter bufferedWriter) throws IOException {
         CapitalizationTypes capitalization=getOptions().getEnumCapitalization();
         String undefinedMember=getOptions().getUndefinedMember();
-
-        StringBuilder stringBuilder=new StringBuilder();
+        setCurrentIndent(1);
         int idx=0;
         if (!Helpers.IsNullOrEmpty(undefinedMember)) {
-            appendEnumMember(undefinedMember,capitalization,stringBuilder);
+            bufferedWriter.append(getIndent())
+                    .append(capitalizeName("", undefinedMember, capitalization));
             idx++;
         }
         for (SchemaField schemaField : this.getSchema().getFields()) {
             if (idx>0)
-                stringBuilder.append(",").append(System.lineSeparator());
-            appendEnumMember(schemaField.getName(),capitalization,stringBuilder);
+                bufferedWriter.append(",").append(System.lineSeparator());
+            bufferedWriter.append(getIndent())
+                    .append(capitalizeName("", schemaField.getName(), capitalization));
             idx++;
         }
-        stringBuilder.append(System.lineSeparator());
-        bufferedWriter.write(stringBuilder.toString());
+        bufferedWriter.append(System.lineSeparator());
     }
 
-    private void appendEnumMember(String name, CapitalizationTypes encapsulationCapitalization, StringBuilder stringBuilder) {
-        capitalizeName("", name, encapsulationCapitalization, stringBuilder);
-    }
 }

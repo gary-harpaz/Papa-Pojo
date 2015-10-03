@@ -85,6 +85,9 @@ public class ArtifactSerializer  implements JsonDeserializer<ArtifactData> {
             case FieldEnum:
                 result= _gson.fromJson(json,FieldEnumArtifactData.class);
                 break;
+            case ImmutableClass:
+                result=_gson.fromJson(json,ImmutableClassData.class);
+                break;
             default:
                 throw new InvalidArtifactType("Unsupported artifact type "+type+" in "+artifactName+" template "+ getDeserializeFilePath());
         }

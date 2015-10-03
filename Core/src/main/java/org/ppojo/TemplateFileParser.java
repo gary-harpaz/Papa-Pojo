@@ -63,7 +63,7 @@ public class TemplateFileParser {
     public boolean validateTemplate(SchemaGraphParser schemaGraphParser, ValidationResult validationResult) {
         int initialErrorSize = validationResult.getErrors().size();
         if (_wasValidateInvoked)
-            return _isValid;
+            return !_isValid;
         _wasValidateInvoked = true;
         if (_rawData.artifacts == null || _rawData.artifacts.length == 0)
             validationResult.addWarning("Template file contains not artifacts to produce in " + _filePath);
@@ -188,7 +188,7 @@ public class TemplateFileParser {
 
     private TemplateFileParser resolveLink(SchemaGraphParser schemaGraphParser, ValidationResult validationResult) {
         TemplateFileParser linkedTemplate;
-        String absoluteLink= Paths.get(_filePath).getParent().resolve(_rawData.linkTo).toString();
+        String absoluteLink= Paths.get(_filePath).getParent().resolve(_rawData.linkTo).normalize().toString();
         linkedTemplate= schemaGraphParser.getAllTemplates().get(absoluteLink);
         if (linkedTemplate==null)
             validationResult.addError("Invalid template link :"+absoluteLink+ " in "+_filePath+". Template could not be found.");
@@ -232,18 +232,10 @@ public class TemplateFileParser {
             return !isValid();
         int initialErrorSize=validationResult.getErrors().size();
         _artifactParsers= Arrays.stream(_rawData.artifacts).map(a->new ArtifactParser(this,a)).collect(Collectors.toList());
-        schemaGraphParser.validateItems(_artifactParsers,parser->parser::validateArtifact,validationResult);
+        for (ArtifactParser artifactParser : _artifactParsers) {
+            artifactParser.validateArtifact(schemaGraphParser,validationResult);
+        }
         return validationResult.getErrors().size()>initialErrorSize;
     }
 
-    public boolean resolveNestedArtifacts(SchemaGraphParser schemaGraphParser, ValidationResult validationResult) {
-        if (!isValid() || _artifactParsers==null) //Template itself is not valid so all artifacts are invalid
-            return !isValid();
-        int initialErrorSize=validationResult.getErrors().size();
-        schemaGraphParser.validateItems(_artifactParsers
-                .stream().filter(parser->parser.isValid())::iterator,
-                parser->parser::resolveNested,validationResult);
-
-        return validationResult.getErrors().size()>initialErrorSize;
-    }
 }

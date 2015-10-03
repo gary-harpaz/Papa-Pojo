@@ -6,6 +6,8 @@ import org.ppojo.ArtifactTypes;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 
 /**
  * Created by GARY on 9/26/2015.
@@ -84,21 +86,25 @@ public class TestTest {
 
     @Test
     public void TestGenericTypes() {
-        ArrayList<String> list1=new ArrayList<String>() {};
-        ArrayList<Path> list2=new ArrayList<Path>() {};
-        Class class1=list1.getClass() ;
-        Class class2=list2.getClass();
-        boolean test=class1.equals(class2);
-        
 
-        String[] arr1=new String[0];
-        Integer[] arr2=new Integer[0];
-        class1=arr1.getClass();
-        class2=arr2.getClass();
-        test=class1.equals(class2);
+        ArrayList<String> arr=new ArrayList<>();
+        arr.add("abc");
+        Path path=Paths.get("zxc");
+        _stam=arr;
+        ArrayList<Path> paths=getSomething();
+        paths.add(path);
 
 
 
+
+
+
+    }
+
+    private static Object _stam;
+
+    private static <T> ArrayList<T> getSomething() {
+        return (ArrayList<T>)_stam;
 
     }
 

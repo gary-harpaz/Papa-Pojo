@@ -1,62 +1,52 @@
 package org.ppojo.utils;
 
-import javax.annotation.*;
+
+import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
-
-import static org.ppojo.utils.Helpers.*;
 
 /**
  * Created by GARY on 9/23/2015.
  */
 public class MapChain {
 
-    private final Map<String,Object> _properties;
-    private final MapChain _parentMap;
     private final String _name;
+    private boolean _hasLocalProperties;
+    private ImmutableMap<String,MapChainValue> _values=ImmutableHashMap.empty();
     public MapChain(String name, @Nullable Map<String,Object> localOptions, @Nullable MapChain parent) {
-
-
+        if ((parent!=null && parent._values.size()>0) || (localOptions!=null && localOptions.size()>0)) {
+            HashMap<String,MapChainValue> values=new HashMap<>();
+            if (parent!=null)
+                for (Map.Entry<String, MapChainValue> entry : parent._values.entries()) {
+                    values.put(entry.getKey(),new MapChainValue(entry.getValue().getValue(),this,entry.getValue().getValueSource()));
+                }
+            if (localOptions!=null)
+                for (Map.Entry<String, Object> entry : localOptions.entrySet()) {
+                    values.put(entry.getKey(),new MapChainValue(entry.getValue(),this,this));
+                    _hasLocalProperties= true;
+                }
+            _values=new ImmutableHashMap<>(values);
+        }
         _name=name;
-        _parentMap = parent;
-        if (localOptions==null)
-            localOptions=new HashMap<>();
-        _properties = localOptions;
     }
 
     public MapChainValue get(String key) {
-        return get(key,this);
+        return _values.get(key);
     }
-    public String getString(String key) {
-        return as(String.class, get(key).getValue());
-    }
-
-    private MapChainValue get(String key,MapChain querySource) {
-        Object value = _properties.get(key);
-        if (value != null)
-            return new MapChainValue(value,querySource,this);
-        if (_parentMap != null)
-            return _parentMap.get(key,querySource);
-        return null;
-    }
-    public void put(String key,Object value) {
-        _properties.put(key,value);
-    }
-
-    public void remove(String key) {
-        _properties.remove(key);
-    }
-
-
     public String getName() {
         return _name;
     }
 
     public Map<String,Object> cloneLocalProperties() {
-        return new HashMap<>(_properties);
+        HashMap<String,Object> result=new HashMap<>();
+        for (Map.Entry<String, MapChainValue> entry : _values.entries()) {
+            if (entry.getValue().isLocalValue())
+                result.put(entry.getKey(),entry.getValue().getValue());
+        }
+        return result;
     }
 
     public boolean hasLocalProperties() {
-        return _properties!=null && !_properties.isEmpty();
+        return _hasLocalProperties;
     }
 }

@@ -1,0 +1,10 @@
+{
+  "linkTo" : "../sampleInterface/Article.pppj",
+  "artifacts" : [
+    {
+      "type" : "ImmutableClass",
+      "name" : "ROArticle",
+      "dataArtifact" : "Article"
+    }
+  ]
+}

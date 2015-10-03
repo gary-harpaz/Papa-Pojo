@@ -65,15 +65,19 @@ public class SchemaGraph {
         bufferedWriter.write(String.format("package %s;%n%n",artifactFile.getPackageName()));
         String[] imports=artifactFile.getOptions().getImports();
         if (imports!=null) {
-            for (String anImport : imports) {
+            for (String anImport : imports)
                 bufferedWriter.write(String.format("import %s;%n", anImport));
-            }
         }
-        bufferedWriter.write(String.format("%n%n"));
-        if (artifactFile.getArtifacts()!=null) {
-            for (ArtifactBase artifactBase : artifactFile.getArtifacts()) {
-                writeArtifactContent(artifactBase,bufferedWriter);
+        int index=0;
+        for (ArtifactBase artifactBase : artifactFile.getArtifacts()) {
+            if (index==0) {
+                String[] moreImports=artifactBase.getMoreImports();
+                for (String moreImport : moreImports)
+                    bufferedWriter.write(String.format("import %s;%n", moreImport));
+                bufferedWriter.write(String.format("%n%n"));
             }
+            writeArtifactContent(artifactBase,bufferedWriter);
+            index++;
         }
         bufferedWriter.flush();
     }

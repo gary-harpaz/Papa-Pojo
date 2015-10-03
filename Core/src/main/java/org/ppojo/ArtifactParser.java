@@ -1,13 +1,17 @@
 package org.ppojo;
 
 import org.ppojo.data.ArtifactData;
+import org.ppojo.data.ImmutableClassData;
 import org.ppojo.utils.Helpers;
 import org.ppojo.utils.ValidationResult;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 import static org.ppojo.utils.Helpers.*;
@@ -30,28 +34,23 @@ public class ArtifactParser {
             _rawData.path="";
         Path templateFolder=Paths.get(_parentTemplate.getFilePath()).getParent();
         Path artifactFolder=templateFolder.resolve(_rawData.path);
+        _dependencyResolveIssues=new HashMap<>();
         if (!isNested()) {
-            _artifactTargetFile=artifactFolder.resolve(_rawData.name+".java").toString();
+            _artifactTargetFile=artifactFolder.resolve(_rawData.name+".java").normalize().toString();
             _artifactKey=_artifactTargetFile+"@"+_rawData.name;
         }
         else {
-            _artifactTargetFile=artifactFolder.resolve(_rawData.nestInArtifact +".java").toString();
+             newTask(ResolveIssueTypes.NestedClass);
+            _artifactTargetFile=artifactFolder.resolve(_rawData.nestInArtifact +".java").normalize().toString();
             _artifactKey=_artifactTargetFile+"@"+_rawData.nestInArtifact +"."+_rawData.name;
         }
         _options=new ArtifactOptions("Artifact "+_rawData.name,_rawData.options,_parentTemplate.getOptions());
+        _artifactType=ArtifactTypes.Parse(_rawData.type);
+        if (_artifactType==ArtifactTypes.FluentBuilder)
+            newTask(ResolveIssueTypes.FluentBuild);
+        if (_artifactType==ArtifactTypes.ImmutableClass)
+            newTask(ResolveIssueTypes.ImmutableClass);
     }
-/*
-    private static HashMap<String,Class> _validOptionDefinitions;
-    static  {
-        _validOptionDefinitions =new HashMap<>();
-        for (ArtifactOptions.Fields field : ArtifactOptions.Fields.values()) {
-            _validOptionDefinitions.put(field.toString(), String.class);
-        }
-        _validOptionDefinitions.put(ArtifactOptions.Fields.imports.toString(), ArrayList.class); //currently the only non string option
-
-    }
-    */
-
     private final TemplateFileParser _parentTemplate;
     private final ArtifactData _rawData;
     private boolean _isValid=false;
@@ -62,10 +61,11 @@ public class ArtifactParser {
     private String _parentSourceFolder;
     private String _artifactTargetFile;
     private String _artifactKey;
-    private ArtifactParser _artifactParentOfNestedArtifact;
+    private ArtifactParser _parentOfNestedArtifact;
     private ArtifactFile _artifactFile;
     private ArtifactBase _artifactBase;
     private ArtifactOptions _options;
+    private Map<ResolveIssueTypes,ResolveTask> _dependencyResolveIssues;
 
 
     public String getArtifactTargetFile() {
@@ -74,8 +74,8 @@ public class ArtifactParser {
     public boolean isNested() {
         return !Helpers.IsNullOrEmpty(_rawData.nestInArtifact);
     }
-    public ArtifactParser getArtifactParentOfNestedArtifact() {
-        return _artifactParentOfNestedArtifact;
+    public ArtifactParser getParentOfNestedArtifact() {
+        return _parentOfNestedArtifact;
     }
     public Iterable<ArtifactParser> getNestedArtifacts() {
         return _nestedArtifact;
@@ -101,6 +101,9 @@ public class ArtifactParser {
     public Schema getSchema() {
         return _parentTemplate.getSchema();
     }
+    public String getTemplateFilePath() {
+        return _parentTemplate.getFilePath();
+    }
     public ArtifactBase getArtifactBase() {
         return _artifactBase;
     }
@@ -109,18 +112,15 @@ public class ArtifactParser {
     }
     public ArtifactOptions getOptions() { return _options; }
 
-
     public boolean validateArtifact(SchemaGraphParser schemaGraphParser, ValidationResult validationResult) {
         if (_wasValidationInvoked)
-            return _isValid;
+            return !_isValid;
         _wasValidationInvoked=true;
         int initialErrorSize=validationResult.getErrors().size();
         validateKeyUniqueness(schemaGraphParser, validationResult);
         checkInvalidCharacters(validationResult,this::checkForInvalidCharInName);
         checkInvalidCharacters(validationResult,this::checkForInvalidCharInNestedIn);
-        validateArtifactType(validationResult);
         validateTargetFileInSourceFolder(schemaGraphParser, validationResult);
-      //  validateOptions(validationResult);
         if (validationResult.getErrors().size()==initialErrorSize) {
             resolveArtifactFile();
             _isValid=true;
@@ -131,26 +131,9 @@ public class ArtifactParser {
 
     private void resolveArtifactFile() {
         if (!isNested()) {
-//            _artifactFile=new ArtifactFile(getArtifactTargetFile(),getParentSourceFolder(),_parentTemplate.getFilePath(),_parentTemplate.getRawData().options,null);
             _artifactFile=new ArtifactFile(getArtifactTargetFile(),getParentSourceFolder(), _options);
         }
 
-    }
-
-    public boolean resolveNested(SchemaGraphParser schemaGraphParser, ValidationResult validationResult) {
-        if (!isNested())
-            return false;
-        int initialErrorSize=validationResult.getErrors().size();
-        String parentKey=Helpers.removeLastOccurrenceOf(_artifactKey,".");
-        _artifactParentOfNestedArtifact= schemaGraphParser.getAllArtifacts().get(parentKey);
-        if (_artifactParentOfNestedArtifact==null)
-            validationResult.addError("Could not match nested artifact to parent artifact definition. Parent key was : "+parentKey+getArtifactLocation());
-        if (validationResult.getErrors().size()>initialErrorSize) {
-            _isValid=false;
-            return true;
-        }
-        _artifactParentOfNestedArtifact.addNestedChild(this);
-        return false;
     }
 
     private void addNestedChild(ArtifactParser nestedChildArtifact) {
@@ -172,26 +155,6 @@ public class ArtifactParser {
             }
     }
 
-    /*
-
-    private void validateOptions(ValidationResult validationResult) {
-        if (_rawData.options!=null) {
-            HashMap<String,Object> validOptions=new HashMap<>();
-            _rawData.options.forEach((option,value)-> {
-                Class optionsClass= _validOptionDefinitions.get(option);
-                if (optionsClass==null)
-                    validationResult.addWarning("Invalid option "+option+" value will be ignored "+getArtifactLocation());
-                else
-                    if (value.getClass()!=optionsClass)
-                        validationResult.addError("Invalid option value for "+option+". Expected value of class "+optionsClass.toString()+" got "+value.getClass().toString()+getArtifactLocation());
-                    else
-                        validOptions.put(option,value);
-            });
-            _rawData.options=validOptions;
-        }
-    }
-    */
-
     private void validateTargetFileInSourceFolder(SchemaGraphParser schemaGraphParser, ValidationResult validationResult) {
         boolean inSourceFolder=false;
         for (String sourceFolder : schemaGraphParser.getRootSourceFolders()) {
@@ -205,13 +168,6 @@ public class ArtifactParser {
             validationResult.addError("Artifact target file "+_artifactTargetFile+" does not reside in any source folder "+getArtifactLocation());
     }
 
-    private void validateArtifactType(ValidationResult validationResult) {
-        try {
-            _artifactType= ArtifactTypes.valueOf(_rawData.type);
-        } catch (Exception ex) {
-            validationResult.addError("Invalid artifact type " + _rawData.type + getArtifactLocation());
-        }
-    }
 
     private void checkInvalidCharacters(ValidationResult validationResult,BiConsumer<String,ValidationResult> delegate) {
         delegate.accept(".", validationResult);
@@ -238,5 +194,127 @@ public class ArtifactParser {
         return " in artifact " + _rawData.name + " template file " + _parentTemplate.getFilePath();
     }
 
+    private boolean getIsResolved() {
+        if (_dependencyResolveIssues==null || _dependencyResolveIssues.size()==0)
+            return true;
+        if (_dependencyResolveIssues.values().stream().allMatch(t->t.dependency!=null))
+            return true;
+        return false;
+    }
 
+    public boolean retryResolve(SchemaGraphParser schemaGraphParser, ValidationResult validationResult) {
+        if (getIsResolved())
+            return false;
+        for (ResolveTask resolveTask : _dependencyResolveIssues.values()) {
+            tryResolve(resolveTask,schemaGraphParser,validationResult);
+            if (resolveTask.hasResolveFailed)
+                return false;
+        }
+        return !getIsResolved();
+    }
+
+    private void tryResolve(ResolveTask resolveTask, SchemaGraphParser schemaGraphParser, ValidationResult validationResult) {
+        if (resolveTask.hasResolveFailed || resolveTask.dependency!=null)
+            return;
+        resolveTask.hasResolveFailed=true;
+        switch (resolveTask.issueType) {
+            case FluentBuild:
+                throw new RuntimeException("Fluent buile resolving not implemented");
+            case ImmutableClass:
+                tryResolveImmutableClass(resolveTask,schemaGraphParser,validationResult);
+                break;
+            case NestedClass:
+                throw new RuntimeException("Nested class resolving not implemented");
+            default:
+                validationResult.addError("Invalid resolve issue type "+resolveTask.issueType);
+                break;
+        }
+        if (resolveTask.dependency!=null)
+            resolveTask.hasResolveFailed=false;
+    }
+
+    private void tryResolveImmutableClass(ResolveTask resolveTask, SchemaGraphParser schemaGraphParser, ValidationResult validationResult) {
+
+        ImmutableClassData data= (ImmutableClassData)_rawData;
+        if (IsNullOrEmpty(data.dataArtifact)) {
+            validationResult.addError("Can not resolve immutable class. Field dataArtifact is missing "+getArtifactLocation());
+            return;
+        }
+        if (data.dataArtifact.equals(_rawData.name)) {
+            validationResult.addError("Can not resolve immutable class. DataArtifact value can not be the same as the name of the artifact "+getArtifactLocation());
+            return;
+        }
+        ArrayList<ArtifactParser> matches=new ArrayList<>();
+        for (ArtifactParser parser : _parentTemplate.getArtifactParsers()) {
+            if (parser._rawData.name.equals(data.dataArtifact))
+                matches.add(parser);
+        }
+        if (_parentTemplate.getSchemaRelationType()==TemplateSchemaRelationTypes.SchemaLink && _parentTemplate.getLinkedTemplate()!=null) {
+            for (ArtifactParser parser : _parentTemplate.getLinkedTemplate().getArtifactParsers()) {
+                if (parser._rawData.name.equals(data.dataArtifact))
+                    matches.add(parser);
+            }
+        }
+        if (matches.size()==0) {
+            validationResult.addError("Can not resolve immutable class. Can not match dataArtifact "+data.dataArtifact+" to existing artifact"+getArtifactLocation());
+            return;
+        }
+        if (matches.size()>1) {
+            validationResult.addError("Can not resolve immutable class. Multiple matches exist for dataArtifact "+data.dataArtifact+getArtifactLocation());
+            return;
+        }
+        ArtifactParser potentialMatch=matches.get(0);
+        if (!potentialMatch.isValid()) {
+            validationResult.addError("Can not resolve immutable class. DataArtifact "+data.dataArtifact+" is not valid"+getArtifactLocation());
+            return;
+        }
+        if (potentialMatch.getArtifactType()!=ArtifactTypes.Pojo) {
+            validationResult.addError("Can not resolve immutable class. DataArtifact "+data.dataArtifact+" is not a Pojo artifact, type is "+potentialMatch.getArtifactType()+getArtifactLocation());
+            return;
+        }
+        if (potentialMatch.getIsResolved())
+            resolveTask.dependency=potentialMatch;
+        else
+            resolveTask.hasResolveFailed=false; //The dependency will retry again
+    }
+
+    public Iterable<ArtifactParser> getDependantArtifactsNotYetGenerated() {
+        if (_dependencyResolveIssues==null || _dependencyResolveIssues.size()==0)
+            return null;
+        ArrayList<ArtifactParser> result=null;
+        for (ResolveTask resolveTask : _dependencyResolveIssues.values()) {
+            //all dependencies are assumed to be resolved here
+            if (resolveTask.dependency.getArtifactBase()==null) {
+                if (result==null)
+                    result=new ArrayList<>();
+                result.add(resolveTask.dependency);
+            }
+        }
+        return result;
+    }
+
+    public PojoArtifact getImmutableDataArtifact() {
+        return  (PojoArtifact)_dependencyResolveIssues.get(ResolveIssueTypes.ImmutableClass).dependency.getArtifactBase();
+    }
+
+    private enum ResolveIssueTypes {
+        NestedClass,
+        ImmutableClass,
+        FluentBuild
+    }
+
+    private ResolveTask newTask(ResolveIssueTypes issueType) {
+        ResolveTask result=new ResolveTask();
+        result.issueType=issueType;
+        _dependencyResolveIssues.put(issueType,result);
+        return result;
+    }
+
+    private class ResolveTask {
+
+        public boolean hasResolveFailed;
+        public ResolveIssueTypes issueType;
+        public ArtifactParser dependency;
+
+    }
 }

@@ -33,6 +33,7 @@ public class ArtifactMetaData {
 
 
         Set<ArtifactOptions.Fields> supportsOptions=new HashSet<>();
+        supportsOptions.add(ArtifactOptions.Fields.indentString);
         supportsOptions.add(ArtifactOptions.Fields.propertyCapitalization);
         supportsOptions.add(ArtifactOptions.Fields.publicFieldCapitalization);
         supportsOptions.add(ArtifactOptions.Fields.encapsulateFields);
@@ -43,6 +44,7 @@ public class ArtifactMetaData {
         NewMetaData(ArtifactTypes.Pojo, ClassArtifactData.class,supportsOptions);
 
         supportsOptions=new HashSet<>();
+        supportsOptions.add(ArtifactOptions.Fields.indentString);
         supportsOptions.add(ArtifactOptions.Fields.propertyCapitalization);
         supportsOptions.add(ArtifactOptions.Fields.getterPrefix);
         supportsOptions.add(ArtifactOptions.Fields.imports);
@@ -50,10 +52,20 @@ public class ArtifactMetaData {
         NewMetaData(ArtifactTypes.Interface, InterfaceArtifactData.class,supportsOptions);
 
         supportsOptions=new HashSet<>();
+        supportsOptions.add(ArtifactOptions.Fields.indentString);
         supportsOptions.add(ArtifactOptions.Fields.enumCapitalization);
         supportsOptions.add(ArtifactOptions.Fields.undefinedMember);
         supportsOptions.add(ArtifactOptions.Fields.imports);
         NewMetaData(ArtifactTypes.FieldEnum,FieldEnumArtifactData.class,supportsOptions);
+
+        supportsOptions=new HashSet<>();
+        supportsOptions.add(ArtifactOptions.Fields.indentString);
+        supportsOptions.add(ArtifactOptions.Fields.propertyCapitalization);
+        supportsOptions.add(ArtifactOptions.Fields.getterPrefix);
+        supportsOptions.add(ArtifactOptions.Fields.imports);
+        supportsOptions.add(ArtifactOptions.Fields.privateFieldPrefix);
+        supportsOptions.add(ArtifactOptions.Fields.privateFieldName);
+        NewMetaData(ArtifactTypes.ImmutableClass,ImmutableClassData.class,supportsOptions);
     }
 
 

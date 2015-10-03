@@ -6,6 +6,9 @@ import org.ppojo.*;
 import org.ppojo.data.*;
 import org.ppojo.utils.ArrayListBuilder;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.ppojo.utils.Helpers.readResourceTextFile;
@@ -54,8 +57,11 @@ public class TemplateSerializerTest {
         when(artifactParser.getSchema()).thenReturn(schema);
         ClassArtifactData classArtifactData=new ClassArtifactData();
         when(artifactParser.getRawData()).thenReturn(classArtifactData);
+        when(artifactParser.isValid()).thenReturn(true);
+        Map<String,Object> options=ArtifactConstructionTest.newDefaultProperties();
+        options.put(ArtifactOptions.Fields.encapsulateFields.toString(),true);
 
-        ArtifactOptions artifactOptions=new ArtifactOptions("test options newSimplePojoSchema",null,null);
+        ArtifactOptions artifactOptions=new ArtifactOptions("test options newSimplePojoSchema",options,null);
         when(artifactParser.getOptions()).thenReturn(artifactOptions);
 
         SchemaGraph schemaGraph=new SchemaGraph(ArrayListBuilder.newArrayList(file).create());

@@ -1,8 +1,6 @@
 package org.ppojo.utils;
 
 
-import org.ppojo.utils.MapChain;
-
 import javax.annotation.*;
 
 /**
@@ -12,6 +10,9 @@ public class MapChainValue {
     private final Object _value;
     private final MapChain _querySource;
     private final MapChain _valueSource;
+    public MapChain getValueSource() {
+        return _valueSource;
+    }
 
     public MapChainValue(Object value,@Nonnull MapChain querySource,@Nonnull MapChain valueSource){
         if (querySource==null)

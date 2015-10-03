@@ -47,17 +47,17 @@ public class InterfaceArtifact extends ArtifactBase{
     public void writeArtifactContent(BufferedWriter bufferedWriter) throws IOException {
         CapitalizationTypes encapsulationCapitalization=getOptions().getCapitalization();
         String getterPrefix=getOptions().getGetterPrefix();
-        getterPrefix=EmptyIfNull(getterPrefix);
         String setterPrefix=getOptions().getSetterPrefix();
-        setterPrefix=EmptyIfNull(setterPrefix);
+
+        setCurrentIndent(1);
 
         for (SchemaField schemaField : this.getSchema().getFields()) {
-            bufferedWriter
+            bufferedWriter.append(getIndent())
                     .append(schemaField.getType()).append(" ")
                     .append(capitalizeName(getterPrefix, schemaField.getName(), encapsulationCapitalization))
                     .append("();").append(System.lineSeparator());
             if (!_isReadOnly) {
-                bufferedWriter.append("void ")
+                bufferedWriter.append(getIndent()).append("void ")
                         .append(capitalizeName(setterPrefix, schemaField.getName(), encapsulationCapitalization))
                         .append("(").append(schemaField.getType()).append(" ").append(schemaField.getName())
                         .append(");").append(System.lineSeparator());

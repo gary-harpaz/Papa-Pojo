@@ -6,6 +6,7 @@ import org.ppojo.utils.MapChainValue;
 
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -23,7 +24,7 @@ public class ArtifactBaseTest {
     public static ArtifactFile newParentMock() {
         ArtifactFile parent=mock(ArtifactFile.class);
         when(parent.getArtifactFileName()).thenReturn(TEST_PATH);
-        HashMap<String,Object> parentOptions=new HashMap<>();
+        Map<String,Object> parentOptions=ArtifactConstructionTest.newDefaultProperties();
         parentOptions.put(PARENT_OPTION, PARENT_OPTION_VALUE);
         ArtifactOptions parentArtifactOptions=new ArtifactOptions("testOptions",parentOptions,null);
         when(parent.getOptions()).thenReturn(parentArtifactOptions);
@@ -51,8 +52,9 @@ public class ArtifactBaseTest {
 
         ArtifactFile parent=mock(ArtifactFile.class);
         when(parent.getArtifactFileName()).thenReturn(TEST_PATH);
-        HashMap<String,Object> parentOptions=new HashMap<>();
+        Map<String,Object> parentOptions=ArtifactConstructionTest.newDefaultProperties();
         parentOptions.put(PARENT_OPTION, PARENT_OPTION_VALUE);
+        parentOptions.put(ArtifactOptions.Fields.encapsulateFields.toString(),true);
         ArtifactOptions parentArtifactOptions=new ArtifactOptions("testOptions",parentOptions,null);
         when(parent.getOptions()).thenReturn(parentArtifactOptions);
 
@@ -60,6 +62,7 @@ public class ArtifactBaseTest {
         Schema schema=mock(Schema.class);
         when(parser.getSchema()).thenReturn(schema);
         ClassArtifactData data=new ClassArtifactData();
+        when(parser.isValid()).thenReturn(true);
 
         when(parser.getRawData()).thenReturn(data);
         when(parser.getOptions()).thenReturn(parentArtifactOptions);

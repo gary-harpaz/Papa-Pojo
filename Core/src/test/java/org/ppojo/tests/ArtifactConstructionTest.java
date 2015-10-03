@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.ppojo.*;
 import org.ppojo.utils.ArrayListBuilder;
+import org.ppojo.utils.EmptyArray;
 import org.ppojo.utils.Helpers;
 
 import java.io.File;
@@ -19,9 +20,7 @@ import static org.ppojo.utils.Helpers.getResourcePath;
  */
 public class ArtifactConstructionTest {
 
-    private static ArtifactOptions _defaultOptions;
-
-    static  {
+    public static Map<String,Object> newDefaultProperties() {
         Map<String,Object> defaultProperties=new HashMap<>();
         defaultProperties.put(ArtifactOptions.Fields.privateFieldPrefix.toString(),"_");
         defaultProperties.put(ArtifactOptions.Fields.encapsulateFields.toString(),true);
@@ -29,8 +28,18 @@ public class ArtifactConstructionTest {
         defaultProperties.put(ArtifactOptions.Fields.publicFieldCapitalization.toString(),CapitalizationTypes.camelCase);
         defaultProperties.put(ArtifactOptions.Fields.getterPrefix.toString(),"get");
         defaultProperties.put(ArtifactOptions.Fields.setterPrefix.toString(),"set");
-        _defaultOptions=new ArtifactOptions("Default",defaultProperties,null);
+        defaultProperties.put(ArtifactOptions.Fields.privateFieldName.toString(),"data");
+        defaultProperties.put(ArtifactOptions.Fields.imports.toString(), EmptyArray.get(String.class));
+        defaultProperties.put(ArtifactOptions.Fields.enumCapitalization.toString(),CapitalizationTypes.camelCase);
+        defaultProperties.put(ArtifactOptions.Fields.undefinedMember.toString(),"");
+        defaultProperties.put(ArtifactOptions.Fields.constantMemberCapitalization.toString(),CapitalizationTypes.ALL_CAPS);
+        defaultProperties.put(ArtifactOptions.Fields.constantValueCapitalization.toString(),CapitalizationTypes.camelCase);
+        defaultProperties.put(ArtifactOptions.Fields.indentString.toString(),"    ");
+        return defaultProperties;
     }
+    private static ArtifactOptions _defaultOptions=new ArtifactOptions("Default",newDefaultProperties(),null);;
+
+
     public static ArtifactOptions getDefaultOptions() {
         return _defaultOptions;
     }

@@ -60,11 +60,11 @@ public class SchemaGraphParser {
     private void generateArtifacts() {
         queryTemplates();
         deserializeTemplateFiles();
-        ValidationResult validationResult=new ValidationResult();
+        ValidationResult validationResult=new ValidationResult(_throwFirstErrorException);
         validateTemplates(validationResult);
         validateArtifacts(validationResult);
         if (!validationResult.hasErrors()) {
-            resolveNestedArtifacts(validationResult);
+            resolveArtifacts(validationResult);
         }
         if (!validationResult.hasErrors()) {
             _allParsersValid=true;
@@ -78,24 +78,31 @@ public class SchemaGraphParser {
     private SchemaGraph generateGraph() {
         assertAllValid();
         List<ArtifactFile> artifactFiles=new ArrayList<>();
-        List<ArtifactParser> artifactsWithNestedChildren=new ArrayList<>();
+/*
         for (ArtifactParser artifactParser : _allArtifactsByArtifactKey.values()) {
-            if (artifactParser.isNested())
+            if (artifactParser.getArtifactBase()!=null) //artifact already created through recursion skip ahead
                 continue;
             ArtifactFile artifactFile=artifactParser.getArtifactFile();
             artifactFiles.add(artifactFile);
             ArtifactBase artifactBase=newArtifact(artifactParser,artifactFile);
             artifactParser.setArtifactBase(artifactBase);
-            if (artifactParser.getNestedArtifacts()!=null)
-                artifactsWithNestedChildren.add(artifactParser);
-        }
-        for (ArtifactParser artifactParser : artifactsWithNestedChildren) {
-            for (ArtifactParser nestedArtifact : artifactParser.getNestedArtifacts()) {
-                newArtifact(nestedArtifact,artifactParser.getArtifactBase());
-            }
-        }
-
+        } */
+        generateGraphRecursive(artifactFiles,_allArtifactsByArtifactKey.values());
         return new SchemaGraph(artifactFiles);
+
+    }
+    private void generateGraphRecursive(List<ArtifactFile> artifactFiles,Iterable<ArtifactParser> artifactParsers) {
+        if (artifactParsers==null)
+            return;
+        for (ArtifactParser artifactParser : artifactParsers) {
+            if (artifactParser.getArtifactBase()!=null) //artifact already created through recursion skip ahead
+                continue;
+            generateGraphRecursive(artifactFiles,artifactParser.getDependantArtifactsNotYetGenerated());
+            ArtifactFile artifactFile=artifactParser.getArtifactFile();
+            artifactFiles.add(artifactFile);
+            ArtifactBase artifactBase=newArtifact(artifactParser,artifactFile);
+            artifactParser.setArtifactBase(artifactBase);
+        }
 
     }
 
@@ -118,8 +125,12 @@ public class SchemaGraphParser {
                 ,interfaceArtifactData.isReadOnly,interfaceArtifactData.extend);
                 break;
             case FieldEnum:
-                FieldEnumArtifactData fieldEnumArtifact=(FieldEnumArtifactData)artifactParser.getRawData();
                 artifactBase=new FieldEnumArtifact(artifactParent,artifactParser);
+                break;
+            case ImmutableClass:
+                ImmutableClassData immutableClassData=(ImmutableClassData)artifactParser.getRawData();
+                PojoArtifact pojoArtifact=artifactParser.getImmutableDataArtifact();
+                artifactBase=new ImmutableClassArtifact(artifactParent,artifactParser,immutableClassData.extend,immutableClassData.implement,pojoArtifact);
                 break;
             default:
                 throw new RuntimeException("Artifact type creation does not implement "+artifactParser.getArtifactType()+" in "+artifactParser.getRawData().name);
@@ -128,16 +139,38 @@ public class SchemaGraphParser {
         return artifactBase;
     }
 
-    private void resolveNestedArtifacts(ValidationResult validationResult) {
-        validateItems(_templatesByFilePath.values(),parser->parser::resolveNestedArtifacts,validationResult);
+    private void resolveArtifacts(ValidationResult validationResult) {
+
+        ArrayList<ArtifactParser> unResolvedArtifacts=new ArrayList<>(_allArtifactsByArtifactKey.values());
+        do {
+            int prevNumUnresolved=_allArtifactsByArtifactKey.size();
+            for (int i = unResolvedArtifacts.size() - 1; i >= 0; i--) {
+                if (!unResolvedArtifacts.get(i).retryResolve(this,validationResult))
+                    unResolvedArtifacts.remove(i);
+            }
+            if (unResolvedArtifacts.size()==0)
+                break;
+            if (prevNumUnresolved==unResolvedArtifacts.size()) {
+                validationResult.addError("No progress resolving artifact dependencies. Possible cyclical dependencies stopping.");
+                break;
+            }
+        } while (true);
+
+
+
+
     }
 
     private void validateArtifacts(ValidationResult validationResult) {
-        validateItems(_templatesByFilePath.values(),parser->parser::validateArtifacts,validationResult);
+        for (TemplateFileParser templateFileParser : _templatesByFilePath.values()) {
+            templateFileParser.validateArtifacts(this,validationResult);
+        }
     }
 
     private void validateTemplates(ValidationResult validationResult) {
-        validateItems(_templatesByFilePath.values(),parser->parser::validateTemplate,validationResult);
+        for (TemplateFileParser templateFileParser : _templatesByFilePath.values()) {
+            templateFileParser.validateTemplate(this,validationResult);
+        }
     }
 
     private void deserializeTemplateFiles() {
@@ -159,18 +192,5 @@ public class SchemaGraphParser {
 
     public Iterable<String> getRootSourceFolders() {
         return _rootSourceFolders;
-    }
-
-    public  <T> void  validateItems(Iterable<T> items,Function<T,IItemValidator> validationDelegate,ValidationResult validationResult) {
-        for (T item : items) {
-            boolean hadErrors=validationDelegate.apply(item).validate(this, validationResult);
-            if (hadErrors && _throwFirstErrorException)
-                throw new RuntimeException(validationResult.getErrors().get(0).getMessage());
-        }
-
-    }
-
-    public interface IItemValidator {
-        boolean validate(SchemaGraphParser schemaGraphParser,ValidationResult validationResult);
     }
 }
