@@ -1,10 +1,11 @@
 package org.ppojo;
 
+import org.ppojo.data.CopyStyleData;
+
 import javax.annotation.Nonnull;
 import java.io.BufferedWriter;
 import java.io.IOException;
-
-import static org.ppojo.utils.Helpers.EmptyIfNull;
+import java.util.Arrays;
 
 /**
  * Created by GARY on 9/23/2015.
@@ -20,15 +21,16 @@ public class PojoArtifact extends ClassArtifactBase {
             _accessor=new FieldAccessor();
     }
     private boolean _encapsulateFields;
-
     private IAccessor _accessor;
+
+
 
 
     private interface IAccessor {
 
-        String formatFieldReader(String fieldName);
-
-        String formatFieldWriter(String fieldName);
+        String formatGetValueMember(String fieldName);
+        String formatSetValueMember(String fieldName);
+        String formatFieldValueMember(String fieldName);
     }
 
     private class PropertyAccessor implements IAccessor {
@@ -36,35 +38,47 @@ public class PojoArtifact extends ClassArtifactBase {
             _propertyCapitalization=getOptions().getCapitalization();
             _getterPrefix=getOptions().getGetterPrefix();
             _setterPrefix=getOptions().getSetterPrefix();
+            _privateFieldPrefix=getOptions().getPrivateFieldPrefix();
         }
-        private CapitalizationTypes _propertyCapitalization;
-        private String _getterPrefix;
-        private String _setterPrefix;
+        private final CapitalizationTypes _propertyCapitalization;
+        private final String _getterPrefix;
+        private final String _setterPrefix;
+        private final String _privateFieldPrefix;
 
         @Override
-        public String formatFieldReader(String fieldName) {
+        public String formatGetValueMember(String fieldName) {
             return capitalizeName(_getterPrefix, fieldName, _propertyCapitalization);
         }
 
         @Override
-        public String formatFieldWriter(String fieldName) {
+        public String formatSetValueMember(String fieldName) {
             return capitalizeName(_setterPrefix, fieldName, _propertyCapitalization);
+        }
+
+        @Override
+        public String formatFieldValueMember(String fieldName) {
+            return _privateFieldPrefix+fieldName;
         }
     }
     private class FieldAccessor implements IAccessor {
         public FieldAccessor() {
-            _publicFieldCapitalizatio=getOptions().getPublicFieldCapitalization();
+            _publicFieldCapitalization =getOptions().getPublicFieldCapitalization();
         }
-        private CapitalizationTypes _publicFieldCapitalizatio;
+        private CapitalizationTypes _publicFieldCapitalization;
 
         @Override
-        public String formatFieldReader(String fieldName) {
-            return capitalizeName("", fieldName, _publicFieldCapitalizatio);
+        public String formatGetValueMember(String fieldName) {
+            return capitalizeName("", fieldName, _publicFieldCapitalization);
         }
 
         @Override
-        public String formatFieldWriter(String fieldName) {
-            return capitalizeName("", fieldName, _publicFieldCapitalizatio);
+        public String formatSetValueMember(String fieldName) {
+            return capitalizeName("", fieldName, _publicFieldCapitalization);
+        }
+
+        @Override
+        public String formatFieldValueMember(String fieldName) {
+            return capitalizeName("", fieldName, _publicFieldCapitalization);
         }
     }
 
@@ -80,35 +94,62 @@ public class PojoArtifact extends ClassArtifactBase {
 
     @Override
     public void writeArtifactContent(BufferedWriter bufferedWriter) throws IOException {
-        writeConstructors(bufferedWriter);
+
         if (!_encapsulateFields)
             writeUnencapsulatedField(bufferedWriter);
         else
             writeEncapsulatedFields(bufferedWriter);
+        writePojoCopyingMembers(bufferedWriter);
     }
 
-    private void writeConstructors(BufferedWriter bufferedWriter) throws IOException {
-         //boolean hasCopyConstructor =getOptions().hasCopyConstructor();
-        boolean hasCopyConstructor =false;
-        if (hasCopyConstructor) {
-            setCurrentIndent(1);
-            bufferedWriter.append(getIndent())
-                    .append("public ").append(this.getName()).append("() {").append(System.lineSeparator());
-            bufferedWriter.append(getIndent()).append("}").append(System.lineSeparator());;
-            bufferedWriter.write(System.lineSeparator());
-
-            bufferedWriter.append("public ").append(this.getName()).append("(").append(getName()).append(" source) {").append(System.lineSeparator());
-            setCurrentIndent(2);
-            for (SchemaField schemaField : this.getSchema().getFields()) {
-
-
-            }
-            setCurrentIndent(1);
-            bufferedWriter.append(getIndent()).append("}").append(System.lineSeparator());;
-            bufferedWriter.write(System.lineSeparator());
-
+    private void writePojoCopyingMembers(BufferedWriter bufferedWriter) throws IOException {
+        CopyStyleData[] copyStyles=getOptions().getPojoCopyStyles();
+        if (copyStyles.length==0)
+            return;
+        CopyStyleData mainStyle=copyStyles[0];
+        int i=1;
+        while (i<copyStyles.length && (mainStyle.style.isFactory())) {
+            CopyStyleData copyStyle = copyStyles[i];
+            if (!copyStyle.style.isFactory())
+                mainStyle=copyStyle;
+            else
+                if (mainStyle.style!=CopyStyleTypes.copyConstructor && copyStyle.style==CopyStyleTypes.copyConstructor)
+                    mainStyle=copyStyle;
+            i++;
         }
+        Arrays.sort(copyStyles,(x,y)-> {
+            CopyStyleData cx=x;
+            CopyStyleData cy=y;
+            if (cx.style==CopyStyleTypes.copyConstructor || cy.style==CopyStyleTypes.copyConstructor) {
+                if (cy.style==CopyStyleTypes.copyConstructor)
+                    return 1;
+                return -1;
+            }
+            return 0;
+        });
 
+        for (CopyStyleData copyStyle : copyStyles) {
+            if (copyStyle.style==CopyStyleTypes.copyConstructor) {
+                writeEmptyConstructor(bufferedWriter);
+            }
+            CopyStyleFormatter formatter=CopyStyleFormatter.getFormatter(copyStyle.style);
+            bufferedWriter.append(System.lineSeparator());
+            formatter.writeMethodDeclaration(this,copyStyle.methodName,bufferedWriter);
+            if (copyStyle.equals(mainStyle))
+                formatter.writeMethodContent(this, bufferedWriter);
+            else
+                formatter.writeMethodCallTo(mainStyle,this,bufferedWriter);
+            setCurrentIndent(1);
+            bufferedWriter.append(this.getIndent()).append("}").append(System.lineSeparator());
+        }
+    }
+
+    private void writeEmptyConstructor(BufferedWriter bufferedWriter) throws IOException {
+        bufferedWriter.append(System.lineSeparator());
+        this.setCurrentIndent(1);
+        bufferedWriter.append(this.getIndent()).append("public ")
+                .append(this.getName()).append("() {").append(System.lineSeparator());
+        bufferedWriter.append(this.getIndent()).append("}").append(System.lineSeparator());
     }
 
     private void writeEncapsulatedFields(BufferedWriter bufferedWriter) throws IOException {
@@ -127,11 +168,11 @@ public class PojoArtifact extends ClassArtifactBase {
         for (SchemaField schemaField : this.getSchema().getFields()) {
             bufferedWriter.append(getIndent()).append("public ")
                     .append(schemaField.getType()).append(" ")
-                    .append(_accessor.formatFieldReader(schemaField.getName()))
+                    .append(_accessor.formatGetValueMember(schemaField.getName()))
                     .append("() { return ").append(privateFieldPrefix).append(schemaField.getName())
                     .append("; }").append(System.lineSeparator());
             bufferedWriter.append(getIndent()).append("public void ")
-                      .append(_accessor.formatFieldWriter(schemaField.getName()))
+                      .append(_accessor.formatSetValueMember(schemaField.getName()))
                      .append("(").append(schemaField.getType()).append(" ").append(schemaField.getName())
                     .append(") { this.").append(privateFieldPrefix).append(schemaField.getName())
                     .append(" = ").append(schemaField.getName()).append("; }").append(System.lineSeparator());
@@ -143,17 +184,18 @@ public class PojoArtifact extends ClassArtifactBase {
         for (SchemaField schemaField : this.getSchema().getFields()) {
             bufferedWriter.append(getIndent()).append("public ")
                     .append(schemaField.getType())
-                    .append(" ").append(_accessor.formatFieldReader(schemaField.getName()))
+                    .append(" ").append(_accessor.formatGetValueMember(schemaField.getName()))
                     .append(";").append(System.lineSeparator());
         }
     }
 
-    public String formatFieldReader(String name) {
-        return _accessor.formatFieldReader(name)+(_encapsulateFields?"()":"");
+    public String formatFieldMember(String fieldName) {
+        return _accessor.formatFieldValueMember(fieldName);
     }
-
-
-
-
+    public String formatGetValue(String fieldName) {
+        if (_encapsulateFields)
+            return _accessor.formatGetValueMember(fieldName)+"()";
+        return _accessor.formatGetValueMember(fieldName);
+    }
 
 }

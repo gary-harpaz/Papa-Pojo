@@ -71,7 +71,7 @@ public class ImmutableClassArtifact extends ClassArtifactBase {
                     .append(schemaField.getType()).append(" ")
                     .append(capitalizeName(getterPrefix,schemaField.getName(),propertyCapitalization))
                     .append("() { return ").append(privateFieldPrefix).append(privateFieldName)
-                    .append(".").append(_targetArtifact.formatFieldReader(schemaField.getName()))
+                    .append(".").append(_targetArtifact.formatGetValue(schemaField.getName()))
                     .append("; }").append(System.lineSeparator());
         }
     }

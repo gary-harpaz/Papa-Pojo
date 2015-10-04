@@ -117,6 +117,10 @@ public class ArtifactOptions extends MapChain {
         return getValue(Fields.indentString);
     }
 
+    public CopyStyleData[] getPojoCopyStyles() {
+        return getValue(Fields.pojoCopyStyles);
+    }
+
     public enum Fields {
         Unknown(null),
         imports(String[].class),

@@ -56,34 +56,62 @@ public class ArtifactConstructionTest {
                 ArrayListBuilder.<ITemplateFileQuery>newArrayList(query).create(),
                 _defaultOptions);
 
-        assertArtifact("sampleSimplePojo\\Person.java");
-        assertArtifact("sampleNamingOptions\\Person1.java");
-        assertArtifact("sampleNamingOptions\\Person2.java");
-        assertArtifact("sampleNamingOptions\\Person3.java");
-        assertArtifact("sampleRelativeOutputPath\\Person3.java");
-        assertArtifact("sampleRelativeOutputPath\\S1\\S2\\Person1.java");
-        assertArtifact("Person2.java");
-        assertArtifact("sampleLibsAndImports\\Person.java");
-        assertArtifact("sampleExtendsImplements\\Worker.java");
-        assertArtifact("sampleInterface\\Article.java");
-        assertArtifact("sampleInterface\\IArticleHeader.java");
-        assertArtifact("sampleInterface\\IArticleHeaderRO.java");
+        assetMainArtifactFile("sampleSimplePojo\\Person.java");
+        assetMainArtifactFile("sampleNamingOptions\\Person1.java");
+        assetMainArtifactFile("sampleNamingOptions\\Person2.java");
+        assetMainArtifactFile("sampleNamingOptions\\Person3.java");
+        assetMainArtifactFile("sampleRelativeOutputPath\\Person3.java");
+        assetMainArtifactFile("sampleRelativeOutputPath\\S1\\S2\\Person1.java");
+        assetMainArtifactFile("Person2.java");
+        assetMainArtifactFile("sampleLibsAndImports\\Person.java");
+        assetMainArtifactFile("sampleExtendsImplements\\Worker.java");
+        assetMainArtifactFile("sampleInterface\\Article.java");
+        assetMainArtifactFile("sampleInterface\\IArticleHeader.java");
+        assetMainArtifactFile("sampleInterface\\IArticleHeaderRO.java");
+        assetMainArtifactFile("sampleExtendsImplements\\Worker.java");
+        assetMainArtifactFile("sampleEnum\\Product.java");
+        assetMainArtifactFile("sampleEnum\\ProductFields.java");
+
+        assertSecondaryArtifactFile("copy\\Person1.java");
+        assertSecondaryArtifactFile("copy\\Person2.java");
+        assertSecondaryArtifactFile("copy\\Person3.java");
+        assertSecondaryArtifactFile("copy\\Person4.java");
+        assertSecondaryArtifactFile("copy\\Person5.java");
+        assertSecondaryArtifactFile("copy\\Person6.java");
+        assertSecondaryArtifactFile("copy\\Person7.java");
+        assertSecondaryArtifactFile("copy\\Person8.java");
+        assertSecondaryArtifactFile("copy\\Person9.java");
+        assertSecondaryArtifactFile("copy\\Person10.java");
+        assertSecondaryArtifactFile("copy\\Person11.java");
+        assertSecondaryArtifactFile("copy\\Person12.java");
+
 
         
     }
 
-    private void assertArtifact(String path) {
+    private void assetMainArtifactFile(String path) {
         File artifactFile= getResourcePath(SchemaTestResources.MainPackageFolder).resolve(path).toFile();
         Assert.assertTrue("Artifact output file not found in "+artifactFile.getAbsolutePath(),artifactFile.exists());
         File resultsFile=getResourcePath(SchemaTestResources.TestResultsMainPackageFolder).resolve(path).toFile();
         Assert.assertTrue("Artifact results file not found in "+resultsFile.getAbsolutePath(),artifactFile.exists());
+        assertArtifactFile(path, artifactFile, resultsFile);
+    }
+
+    private void assertSecondaryArtifactFile(String path) {
+        File artifactFile= getResourcePath(SchemaTestResources.SecondaryPackageFolder).resolve(path).toFile();
+        Assert.assertTrue("Artifact output file not found in "+artifactFile.getAbsolutePath(),artifactFile.exists());
+        File resultsFile=getResourcePath(SchemaTestResources.TestResultsSecondaryPackageFolder).resolve(path).toFile();
+        Assert.assertTrue("Artifact results file not found in "+resultsFile.getAbsolutePath(),artifactFile.exists());
+        assertArtifactFile(path, artifactFile, resultsFile);
+    }
+
+    private void assertArtifactFile(String path, File artifactFile, File resultsFile) {
         String outputText= Helpers.readTextFile(artifactFile.getAbsolutePath());
         outputText=outputText.replaceAll("\\s+","");
         String resultText=Helpers.readTextFile(resultsFile.getAbsolutePath());
         resultText=resultText.replace(SchemaTestResources.testResultWarning,"");
         resultText=resultText.replaceAll("\\s+","");
-        Assert.assertTrue("Output file and result file don't match. output has changed in "+path,outputText.equals(resultText));
-
+        Assert.assertTrue("Output file and result file don't match. output has changed in " + path, outputText.equals(resultText));
     }
 
     private void cleanupPreviousArtifacts() {

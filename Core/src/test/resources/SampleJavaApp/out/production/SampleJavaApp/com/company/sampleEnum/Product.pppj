@@ -1,0 +1,29 @@
+{
+  "fields": {
+    "productID" : "String",
+    "name" : "String",
+    "width": "double",
+    "height": "double",
+    "price" : "double",
+    "logo" : "URL",
+    "releaseDate" : "Date",
+    "amountInStock" : "int"
+  },
+  "artifacts": [
+    {
+      "type": "Pojo",
+      "name": "Product",
+      "imports" : [
+        "java.net.URL",
+        "java.util.Date"
+      ]
+    }
+    ,
+    {
+      "name" : "ProductFields",
+      "type" : "FieldEnum",
+      "undefinedMember" : "undefined",
+      "enumCapitalization" : "PascalCase"
+    }
+  ]
+}

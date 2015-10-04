@@ -7,10 +7,270 @@
   "artifacts": [
     {
       "type": "Pojo",
-      "name" : "Person",
-      "pojoCopyStyles" : [ "copyConstructor" , "staticMethod" ,
+      "name" : "Person1",
+      "pojoCopyStyles" : [ {
+        "style" : "staticFactory",
+        "methodName" : "a"
+        },
         {
-          "style" : "staticFactory"
+          "style" : "memberFactory",
+          "methodName" : "b"
+        }
+      ]
+
+    },
+    {
+      "type": "Pojo",
+      "name" : "Person2",
+      "encapsulateFields" : false,
+      "pojoCopyStyles" :  [ {
+        "style" : "staticFactory",
+        "methodName" : "a"
+      },
+        {
+          "style" : "memberFactory",
+          "methodName" : "b"
+        }
+      ]
+    },
+    {
+      "type": "Pojo",
+      "name" : "Person3",
+      "pojoCopyStyles" : [
+        {
+          "style" : "memberFactory",
+          "methodName" : "b"
+        },
+        {
+          "style" : "staticFactory",
+          "methodName" : "a"
+        }
+      ]
+
+    },
+    {
+      "type": "Pojo",
+      "name" : "Person4",
+      "encapsulateFields" : false,
+      "pojoCopyStyles" : [ {
+        "style" : "memberFactory",
+        "methodName" : "b"
+      },
+        {
+          "style" : "staticFactory",
+          "methodName" : "a"
+        }
+      ]
+
+    },
+    {
+      "type": "Pojo",
+      "name" : "Person5",
+      "pojoCopyStyles" : [  {
+        "style" : "memberFactory",
+        "methodName" : "b"
+      },
+        {
+          "style" : "staticFactory",
+          "methodName" : "a"
+        },
+        {
+          "style" : "copyConstructor"
+        }
+      ]
+
+    },
+    {
+      "type": "Pojo",
+      "name" : "Person6",
+      "encapsulateFields" : false,
+      "pojoCopyStyles" : [ {
+        "style" : "memberFactory",
+        "methodName" : "b"
+      },
+        {
+          "style" : "staticFactory",
+          "methodName" : "a"
+        },
+        {
+          "style" : "copyConstructor"
+        }
+      ]
+
+    },
+    {
+      "type": "Pojo",
+      "name" : "Person7",
+      "pojoCopyStyles" : [  {
+        "style" : "memberFactory",
+        "methodName" : "b"
+      },
+        {
+          "style" : "staticFactory",
+          "methodName" : "a"
+        },
+        {
+          "style" : "copyConstructor"
+        },
+        {
+          "style" : "staticMethod",
+          "methodName" : "c"
+        },
+        {
+          "style" : "memberCopyFrom",
+          "methodName" : "d"
+        },
+        {
+          "style" : "memberCopyTo",
+          "methodName" : "e"
+        }
+      ]
+
+    },
+    {
+      "type": "Pojo",
+      "name" : "Person8",
+      "encapsulateFields" : false,
+      "pojoCopyStyles" : [ {
+        "style" : "memberFactory",
+        "methodName" : "b"
+      },
+        {
+          "style" : "staticFactory",
+          "methodName" : "a"
+        },
+        {
+          "style" : "copyConstructor"
+        },
+        {
+          "style" : "staticMethod",
+          "methodName" : "c"
+        },
+        {
+          "style" : "memberCopyFrom",
+          "methodName" : "d"
+        },
+        {
+          "style" : "memberCopyTo",
+          "methodName" : "e"
+        }
+      ]
+
+    },
+    {
+      "type": "Pojo",
+      "name" : "Person9",
+      "pojoCopyStyles" : [  {
+        "style" : "memberFactory",
+        "methodName" : "b"
+      },
+        {
+          "style" : "staticFactory",
+          "methodName" : "a"
+        },
+        {
+          "style" : "copyConstructor"
+        },
+        {
+          "style" : "memberCopyFrom",
+          "methodName" : "d"
+        },
+        {
+          "style" : "staticMethod",
+          "methodName" : "c"
+        },
+        {
+          "style" : "memberCopyTo",
+          "methodName" : "e"
+        }
+      ]
+
+    },
+    {
+      "type": "Pojo",
+      "name" : "Person10",
+      "encapsulateFields" : false,
+      "pojoCopyStyles" : [ {
+        "style" : "memberFactory",
+        "methodName" : "b"
+      },
+        {
+          "style" : "staticFactory",
+          "methodName" : "a"
+        },
+        {
+          "style" : "copyConstructor"
+        },
+        {
+          "style" : "memberCopyFrom",
+          "methodName" : "d"
+        },
+        {
+          "style" : "staticMethod",
+          "methodName" : "c"
+        },
+        {
+          "style" : "memberCopyTo",
+          "methodName" : "e"
+        }
+      ]
+
+    },
+    {
+      "type": "Pojo",
+      "name" : "Person11",
+      "pojoCopyStyles" : [  {
+        "style" : "memberFactory",
+        "methodName" : "b"
+      },
+        {
+          "style" : "staticFactory",
+          "methodName" : "a"
+        },
+        {
+          "style" : "copyConstructor"
+        },
+        {
+          "style" : "memberCopyTo",
+          "methodName" : "e"
+        },
+        {
+          "style" : "memberCopyFrom",
+          "methodName" : "d"
+        },
+        {
+          "style" : "staticMethod",
+          "methodName" : "c"
+        }
+      ]
+
+    },
+    {
+      "type": "Pojo",
+      "name" : "Person12",
+      "encapsulateFields" : false,
+      "pojoCopyStyles" : [  {
+        "style" : "memberFactory",
+        "methodName" : "b"
+      },
+        {
+          "style" : "staticFactory",
+          "methodName" : "a"
+        },
+        {
+          "style" : "copyConstructor"
+        },
+        {
+          "style" : "memberCopyTo",
+          "methodName" : "e"
+        },
+        {
+          "style" : "memberCopyFrom",
+          "methodName" : "d"
+        },
+        {
+          "style" : "staticMethod",
+          "methodName" : "c"
         }
       ]
 

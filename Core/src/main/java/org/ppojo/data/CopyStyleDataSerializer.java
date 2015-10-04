@@ -2,7 +2,7 @@ package org.ppojo.data;
 
 import com.google.gson.*;
 import org.ppojo.exceptions.EnumParseException;
-import org.ppojo.utils.CopyStyleTypes;
+import org.ppojo.CopyStyleTypes;
 import org.ppojo.utils.EmptyArray;
 
 import java.lang.reflect.Type;

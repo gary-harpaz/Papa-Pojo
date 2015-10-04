@@ -1,0 +1,43 @@
+{
+  "fields": {
+    "author" : "String",
+    "rating" : "String",
+    "dateCreated": "Date",
+    "datePublished": "Date",
+    "genre" : "String",
+    "tags" : "String",
+    "headLine" : "String",
+    "text" :"String",
+    "version" : "String",
+    "url" : "URL",
+    "wordCount": "int",
+    "language" : "String"
+  },
+  "artifacts": [
+    {
+      "type": "Pojo",
+      "name": "Article1",
+      "pojoCopyStyles" : ["copyConstructor" ,"staticFactory"]
+    },
+    {
+      "type": "Pojo",
+      "name": "Article2",
+      "pojoCopyStyles" : [
+        {
+         "style" : "memberFactory",
+          "methodName" : "MyCopy"
+        },
+        {
+          "style" : "memberCopyFrom",
+          "methodName" : "CopyFields"
+        }
+        ]
+    }
+  ],
+  "options" : {
+    "imports" : [
+      "java.net.URL",
+      "java.util.Date"
+    ]
+  }
+}

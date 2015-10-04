@@ -1,6 +1,6 @@
 package org.ppojo.data;
 
-import org.ppojo.utils.CopyStyleTypes;
+import org.ppojo.CopyStyleTypes;
 
 /**
  * Created by GARY on 10/3/2015.

@@ -14,10 +14,13 @@ public class SchemaTestResources {
     public static final String SampleJavaApp="SampleJavaApp";
     public static final String srcFolder="src";
     public static final String rootPackagePath="com\\company";
+    public static final String secondaryPackagePath="other\\tests";
     public static final String testResultsFolder="TestResults";
     public static final String MainSourcesFolder= Paths.get(SampleJavaApp, srcFolder).toString();
     public static final String MainPackageFolder= Paths.get(MainSourcesFolder, rootPackagePath).toString();
     public static final String TestResultsMainPackageFolder=Paths.get(testResultsFolder,srcFolder,rootPackagePath).toString();
+    public static final String SecondaryPackageFolder= Paths.get(MainSourcesFolder, secondaryPackagePath).toString();
+    public static final String TestResultsSecondaryPackageFolder=Paths.get(testResultsFolder,srcFolder,secondaryPackagePath).toString();
 
     public static final String BadTemplateRootFolder=SampleJavaApp+"\\srcBadTemplates\\com\\company2";
     private static final Set<String> _templateFiles;
