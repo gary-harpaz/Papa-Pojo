@@ -40,7 +40,9 @@ public class PojoArtifact extends ClassArtifactBase {
     public String getMainCopyStyleMethod() {
         return  _mainCopyStyle.methodName;
     }
-    
+
+
+
     private interface IAccessor {
 
         String formatGetValueMember(String fieldName);
@@ -226,6 +228,12 @@ public class PojoArtifact extends ClassArtifactBase {
         if (_encapsulateFields)
             return _accessor.formatGetValueMember(fieldName)+"()";
         return _accessor.formatGetValueMember(fieldName);
+    }
+
+    public String formatSetValue(String fieldName,String varName) {
+        if (_encapsulateFields)
+            return _accessor.formatSetValueMember(fieldName)+"("+varName+")";
+        return _accessor.formatFieldValueMember(fieldName)+" = "+varName;
     }
 
 }

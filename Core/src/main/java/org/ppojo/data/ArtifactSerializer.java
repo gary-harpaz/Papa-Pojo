@@ -75,7 +75,7 @@ public class ArtifactSerializer  implements JsonDeserializer<ArtifactData> {
         }
 
 
-        ArtifactData result;
+        ArtifactData result; //TODO user artifact meta data instead of switch
         switch (artifactTypes) {
             case Pojo:
                 result= _gson.fromJson(json,ClassArtifactData.class);
@@ -88,6 +88,9 @@ public class ArtifactSerializer  implements JsonDeserializer<ArtifactData> {
                 break;
             case ImmutableClass:
                 result=_gson.fromJson(json,ImmutableClassData.class);
+                break;
+            case FluentBuilder:
+                result=_gson.fromJson(json,FluentBuilderData.class);
                 break;
             default:
                 throw new InvalidArtifactType("Unsupported artifact type "+type+" in "+artifactName+" template "+ getDeserializeFilePath());

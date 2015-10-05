@@ -39,6 +39,9 @@ public class ArtifactConstructionTest {
         defaultProperties.put(ArtifactOptions.Fields.pojoCopyStyles.toString(),EmptyArray.get(CopyStyleData.class));
         defaultProperties.put(ArtifactOptions.Fields.immutableCopyDataMember .toString(),"");
         defaultProperties.put(ArtifactOptions.Fields.immutableDefensiveCopy.toString(),false);
+        defaultProperties.put(ArtifactOptions.Fields.fluentNewBuilderName.toString(),"newBuilder");
+        defaultProperties.put(ArtifactOptions.Fields.fluentGetDataName.toString(),"create");
+        defaultProperties.put(ArtifactOptions.Fields.fluentResetBuilderName.toString(),"reset");
         return defaultProperties;
     }
     private static ArtifactOptions _defaultOptions=new ArtifactOptions("Default",newDefaultProperties(),null);;
@@ -73,6 +76,8 @@ public class ArtifactConstructionTest {
         assetMainArtifactFile("sampleExtendsImplements\\Worker.java");
         assetMainArtifactFile("sampleEnum\\Product.java");
         assetMainArtifactFile("sampleEnum\\ProductFields.java");
+        assetMainArtifactFile("sampleFluentBuilder\\Article.java");
+        assetMainArtifactFile("sampleFluentBuilder\\ArticleBuilder.java");
 
         assertSecondaryArtifactFile("copy\\Person1.java");
         assertSecondaryArtifactFile("copy\\Person2.java");

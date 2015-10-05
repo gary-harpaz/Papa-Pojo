@@ -1,15 +1,12 @@
 package org.ppojo;
 
-import org.ppojo.utils.EmptyArray;
 import org.ppojo.utils.Helpers;
 
 import javax.annotation.Nonnull;
 import java.io.BufferedWriter;
 import java.io.IOException;
-import java.util.Arrays;
 
 import static org.ppojo.utils.Helpers.EmptyIfNull;
-import static org.ppojo.utils.Helpers.as;
 
 /**
  * Created by GARY on 10/1/2015.
@@ -28,21 +25,8 @@ public class ImmutableClassArtifact extends ClassArtifactBase {
         return ArtifactTypes.ImmutableClass;
     }
 
-    @Override
-    public void writeArtifactDeceleration(BufferedWriter bufferedWriter) throws IOException {
-        super.writeArtifactDeceleration(bufferedWriter);
-    }
-
     public  @Nonnull String[] getMoreImports() {
-        ArtifactFile artifactFile=as(ArtifactFile.class,_targetArtifact.getArtifactParent());
-        if (artifactFile!=null) {
-            String possibleImport1 = artifactFile.getPackageName() + "." + _targetArtifact.getName();
-            String possibleImport2 = artifactFile.getPackageName() + ".*";
-            String[] imports = artifactFile.getOptions().getImports();
-            if (imports == null || Arrays.stream(imports).noneMatch(imp -> imp.equals(possibleImport1) || imp.equals(possibleImport2)))
-                return new String[] {possibleImport1};
-        }
-        return EmptyArray.get(String.class);
+        return getRequiredArtifactImports(_targetArtifact);
     }
 
     @Override
@@ -60,7 +44,7 @@ public class ImmutableClassArtifact extends ClassArtifactBase {
 
     private void writeCopyData(BufferedWriter bufferedWriter,String privateFieldPrefix, String privateFieldName) throws IOException {
         bufferedWriter.write(System.lineSeparator());
-        String copyDataMemberName=getOptions().getimmutableCopyDataMember();
+        String copyDataMemberName=getOptions().getImmutableCopyDataMember();
         if (!Helpers.IsNullOrEmpty(copyDataMemberName)) {
             assetTargetHasCopyMember();
             CopyStyleTypes styleType=_targetArtifact.getMainCopyStyle();

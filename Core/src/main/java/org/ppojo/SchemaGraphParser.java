@@ -132,6 +132,11 @@ public class SchemaGraphParser {
                 PojoArtifact pojoArtifact=artifactParser.getImmutableDataArtifact();
                 artifactBase=new ImmutableClassArtifact(artifactParent,artifactParser,immutableClassData.extend,immutableClassData.implement,pojoArtifact);
                 break;
+            case FluentBuilder:
+                FluentBuilderData fluentBuilderData=(FluentBuilderData)artifactParser.getRawData();
+                PojoArtifact fluentDataArtifact=artifactParser.getFluentDataArtifact();
+                artifactBase=new FluentBuilderArtifact(artifactParent,artifactParser,fluentBuilderData.extend,fluentBuilderData.implement,fluentDataArtifact);
+                break;
             default:
                 throw new RuntimeException("Artifact type creation does not implement "+artifactParser.getArtifactType()+" in "+artifactParser.getRawData().name);
         }

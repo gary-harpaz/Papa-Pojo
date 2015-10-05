@@ -69,6 +69,18 @@ public class ArtifactMetaData {
         supportsOptions.add(ArtifactOptions.Fields.immutableCopyDataMember);
         supportsOptions.add(ArtifactOptions.Fields.immutableDefensiveCopy);
         NewMetaData(ArtifactTypes.ImmutableClass,ImmutableClassData.class,supportsOptions);
+
+        supportsOptions=new HashSet<>();
+        supportsOptions.add(ArtifactOptions.Fields.indentString);
+        supportsOptions.add(ArtifactOptions.Fields.propertyCapitalization);
+        supportsOptions.add(ArtifactOptions.Fields.setterPrefix);
+        supportsOptions.add(ArtifactOptions.Fields.imports);
+        supportsOptions.add(ArtifactOptions.Fields.privateFieldPrefix);
+        supportsOptions.add(ArtifactOptions.Fields.privateFieldName);
+        supportsOptions.add(ArtifactOptions.Fields.fluentNewBuilderName);
+        supportsOptions.add(ArtifactOptions.Fields.fluentGetDataName);
+        supportsOptions.add(ArtifactOptions.Fields.fluentResetBuilderName);
+        NewMetaData(ArtifactTypes.FluentBuilder,FluentBuilderData.class,supportsOptions);
     }
 
 

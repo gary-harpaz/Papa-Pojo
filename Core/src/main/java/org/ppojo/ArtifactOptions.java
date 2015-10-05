@@ -35,6 +35,9 @@ public class ArtifactOptions extends MapChain {
         defaultProperties.put(ArtifactOptions.Fields.pojoCopyStyles.toString(),EmptyArray.get(CopyStyleData.class));
         defaultProperties.put(ArtifactOptions.Fields.immutableCopyDataMember .toString(),"");
         defaultProperties.put(ArtifactOptions.Fields.immutableDefensiveCopy.toString(),false);
+        defaultProperties.put(ArtifactOptions.Fields.fluentNewBuilderName.toString(),"newBuilder");
+        defaultProperties.put(ArtifactOptions.Fields.fluentGetDataName.toString(),"getData");
+        defaultProperties.put(ArtifactOptions.Fields.fluentResetBuilderName.toString(),"reset");
         _defaultOptions=new ArtifactOptions("Default",defaultProperties,null);
     }
     public ArtifactOptions(String name,@Nullable Map<String,Object> localProperties, @Nullable ArtifactOptions parent) {
@@ -123,12 +126,24 @@ public class ArtifactOptions extends MapChain {
         return getValue(Fields.pojoCopyStyles);
     }
 
-    public String getimmutableCopyDataMember() {
+    public String getImmutableCopyDataMember() {
         return getValue(Fields.immutableCopyDataMember);
     }
 
     public boolean getIsDefensiveCopy() {
         return getValue(Fields.immutableDefensiveCopy);
+    }
+
+    public String getFluentResetBuilderName() {
+        return getValue(Fields.fluentResetBuilderName);
+    }
+
+    public String getFluentNewBuilderName() {
+        return getValue(Fields.fluentNewBuilderName);
+    }
+
+    public String getFluentGetDataName() {
+        return getValue(Fields.fluentGetDataName);
     }
 
     public enum Fields {
@@ -148,7 +163,10 @@ public class ArtifactOptions extends MapChain {
         indentString(String.class),
         pojoCopyStyles(CopyStyleData[].class),
         immutableCopyDataMember(String.class),
-        immutableDefensiveCopy(boolean.class)
+        immutableDefensiveCopy(boolean.class),
+        fluentNewBuilderName(String.class),
+        fluentGetDataName(String.class),
+        fluentResetBuilderName(String.class)
         ;
 
 

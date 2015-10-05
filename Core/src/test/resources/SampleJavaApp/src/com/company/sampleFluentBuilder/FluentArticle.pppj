@@ -1,0 +1,35 @@
+{
+  "fields": {
+    "author" : "String",
+    "rating" : "String",
+    "dateCreated": "Date",
+    "datePublished": "Date",
+    "genre" : "String",
+    "tags" : "String",
+    "headLine" : "String",
+    "text" :"String",
+    "version" : "String",
+    "url" : "URL",
+    "wordCount": "int",
+    "language" : "String"
+  },
+  "artifacts" : [
+    {
+      "type": "Pojo",
+      "name": "Article"
+    },
+    {
+      "type" : "FluentBuilder",
+      "name" : "ArticleBuilder",
+      "dataArtifact" : "Article",
+      "fluentNewBuilderName" : "createBuilder",
+      "fluentGetDataName" : "getData"
+    }
+  ],
+  "options" : {
+    "imports" : [
+      "java.net.URL",
+      "java.util.Date"
+    ]
+  }
+}
