@@ -66,6 +66,8 @@ public class ArtifactMetaData {
         supportsOptions.add(ArtifactOptions.Fields.imports);
         supportsOptions.add(ArtifactOptions.Fields.privateFieldPrefix);
         supportsOptions.add(ArtifactOptions.Fields.privateFieldName);
+        supportsOptions.add(ArtifactOptions.Fields.immutableCopyDataMember);
+        supportsOptions.add(ArtifactOptions.Fields.immutableDefensiveCopy);
         NewMetaData(ArtifactTypes.ImmutableClass,ImmutableClassData.class,supportsOptions);
     }
 

@@ -1,10 +1,35 @@
 {
-  "linkTo" : "../sampleInterface/Article.pppj",
+  "fields": {
+    "author" : "String",
+    "rating" : "String",
+    "dateCreated": "Date",
+    "datePublished": "Date",
+    "genre" : "String",
+    "tags" : "String",
+    "headLine" : "String",
+    "text" :"String",
+    "version" : "String",
+    "url" : "URL",
+    "wordCount": "int",
+    "language" : "String"
+  },
   "artifacts" : [
+    {
+      "type": "Pojo",
+      "name": "Article"
+    },
     {
       "type" : "ImmutableClass",
       "name" : "ROArticle",
-      "dataArtifact" : "Article"
+      "dataArtifact" : "Article",
+      "immutableCopyDataMember" : "copyData",
+      "immutableDefensiveCopy" :true
     }
-  ]
+  ],
+  "options" : {
+    "imports" : [
+      "java.net.URL",
+      "java.util.Date"
+    ]
+  }
 }

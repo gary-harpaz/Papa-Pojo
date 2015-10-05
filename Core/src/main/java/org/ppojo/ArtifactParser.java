@@ -21,6 +21,8 @@ import static org.ppojo.utils.Helpers.*;
  */
 public class ArtifactParser {
 
+    private boolean _forceCopyMember;
+
     ArtifactParser(TemplateFileParser parentTemplate,ArtifactData rawData) {
         _parentTemplate=parentTemplate;
         _rawData=rawData;
@@ -235,47 +237,50 @@ public class ArtifactParser {
 
     private void tryResolveImmutableClass(ResolveTask resolveTask, SchemaGraphParser schemaGraphParser, ValidationResult validationResult) {
 
-        ImmutableClassData data= (ImmutableClassData)_rawData;
+        ImmutableClassData data = (ImmutableClassData) _rawData;
         if (IsNullOrEmpty(data.dataArtifact)) {
-            validationResult.addError("Can not resolve immutable class. Field dataArtifact is missing "+getArtifactLocation());
+            validationResult.addError("Can not resolve immutable class. Field dataArtifact is missing " + getArtifactLocation());
             return;
         }
         if (data.dataArtifact.equals(_rawData.name)) {
-            validationResult.addError("Can not resolve immutable class. DataArtifact value can not be the same as the name of the artifact "+getArtifactLocation());
+            validationResult.addError("Can not resolve immutable class. DataArtifact value can not be the same as the name of the artifact " + getArtifactLocation());
             return;
         }
-        ArrayList<ArtifactParser> matches=new ArrayList<>();
+        ArrayList<ArtifactParser> matches = new ArrayList<>();
         for (ArtifactParser parser : _parentTemplate.getArtifactParsers()) {
             if (parser._rawData.name.equals(data.dataArtifact))
                 matches.add(parser);
         }
-        if (_parentTemplate.getSchemaRelationType()==TemplateSchemaRelationTypes.SchemaLink && _parentTemplate.getLinkedTemplate()!=null) {
+        if (_parentTemplate.getSchemaRelationType() == TemplateSchemaRelationTypes.SchemaLink && _parentTemplate.getLinkedTemplate() != null) {
             for (ArtifactParser parser : _parentTemplate.getLinkedTemplate().getArtifactParsers()) {
                 if (parser._rawData.name.equals(data.dataArtifact))
                     matches.add(parser);
             }
         }
-        if (matches.size()==0) {
-            validationResult.addError("Can not resolve immutable class. Can not match dataArtifact "+data.dataArtifact+" to existing artifact"+getArtifactLocation());
+        if (matches.size() == 0) {
+            validationResult.addError("Can not resolve immutable class. Can not match dataArtifact " + data.dataArtifact + " to existing artifact" + getArtifactLocation());
             return;
         }
-        if (matches.size()>1) {
-            validationResult.addError("Can not resolve immutable class. Multiple matches exist for dataArtifact "+data.dataArtifact+getArtifactLocation());
+        if (matches.size() > 1) {
+            validationResult.addError("Can not resolve immutable class. Multiple matches exist for dataArtifact " + data.dataArtifact + getArtifactLocation());
             return;
         }
-        ArtifactParser potentialMatch=matches.get(0);
+        ArtifactParser potentialMatch = matches.get(0);
         if (!potentialMatch.isValid()) {
-            validationResult.addError("Can not resolve immutable class. DataArtifact "+data.dataArtifact+" is not valid"+getArtifactLocation());
+            validationResult.addError("Can not resolve immutable class. DataArtifact " + data.dataArtifact + " is not valid" + getArtifactLocation());
             return;
         }
-        if (potentialMatch.getArtifactType()!=ArtifactTypes.Pojo) {
-            validationResult.addError("Can not resolve immutable class. DataArtifact "+data.dataArtifact+" is not a Pojo artifact, type is "+potentialMatch.getArtifactType()+getArtifactLocation());
+        if (potentialMatch.getArtifactType() != ArtifactTypes.Pojo) {
+            validationResult.addError("Can not resolve immutable class. DataArtifact " + data.dataArtifact + " is not a Pojo artifact, type is " + potentialMatch.getArtifactType() + getArtifactLocation());
             return;
         }
-        if (potentialMatch.getIsResolved())
-            resolveTask.dependency=potentialMatch;
-        else
-            resolveTask.hasResolveFailed=false; //The dependency will retry again
+        if (potentialMatch.getIsResolved()) {
+            if (!Helpers.IsNullOrEmpty(this.getOptions().getimmutableCopyDataMember())) {
+                potentialMatch.setForceCopyMember(true); // force the match to have a copy member for cloning the immutable class data
+            }
+            resolveTask.dependency = potentialMatch;
+        } else
+            resolveTask.hasResolveFailed = false; //The dependency will retry again
     }
 
     public Iterable<ArtifactParser> getDependantArtifactsNotYetGenerated() {
@@ -295,6 +300,14 @@ public class ArtifactParser {
 
     public PojoArtifact getImmutableDataArtifact() {
         return  (PojoArtifact)_dependencyResolveIssues.get(ResolveIssueTypes.ImmutableClass).dependency.getArtifactBase();
+    }
+
+    public void setForceCopyMember(boolean forceCopyMember) {
+        _forceCopyMember = forceCopyMember;
+    }
+
+    public boolean isForceCopyMember() {
+        return _forceCopyMember;
     }
 
     private enum ResolveIssueTypes {

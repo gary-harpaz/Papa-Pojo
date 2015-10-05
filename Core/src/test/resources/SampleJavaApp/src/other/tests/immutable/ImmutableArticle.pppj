@@ -1,0 +1,86 @@
+{
+  "fields": {
+    "author" : "String",
+    "rating" : "String",
+    "dateCreated": "Date",
+    "datePublished": "Date",
+    "genre" : "String",
+    "tags" : "String",
+    "headLine" : "String",
+    "text" :"String",
+    "version" : "String",
+    "url" : "URL",
+    "wordCount": "int",
+    "language" : "String"
+  },
+  "artifacts" : [
+    {
+      "type": "Pojo",
+      "name": "Article1",
+      "pojoCopyStyles" : [ "staticFactory" ]
+    },
+    {
+      "type" : "ImmutableClass",
+      "name" : "ROArticle1",
+      "dataArtifact" : "Article1"
+    },
+    {
+      "type": "Pojo",
+      "name": "Article2",
+      "pojoCopyStyles" : [ "memberFactory" ]
+    },
+    {
+      "type" : "ImmutableClass",
+      "name" : "ROArticle2",
+      "dataArtifact" : "Article2"
+    },
+    {
+      "type": "Pojo",
+      "name": "Article3",
+      "pojoCopyStyles" : [ "staticMethod" ]
+    },
+    {
+      "type" : "ImmutableClass",
+      "name" : "ROArticle3",
+      "dataArtifact" : "Article3"
+    },
+    {
+      "type": "Pojo",
+      "name": "Article4",
+      "pojoCopyStyles" : [ "memberCopyFrom" ]
+    },
+    {
+      "type" : "ImmutableClass",
+      "name" : "ROArticle4",
+      "dataArtifact" : "Article4"
+    },
+    {
+      "type": "Pojo",
+      "name": "Article5",
+      "pojoCopyStyles" : [ "memberCopyTo" ]
+    },
+    {
+      "type" : "ImmutableClass",
+      "name" : "ROArticle5",
+      "dataArtifact" : "Article5"
+    },
+    {
+      "type": "Pojo",
+      "name": "Article6",
+      "pojoCopyStyles" : [ "copyConstructor" ]
+    },
+    {
+      "type" : "ImmutableClass",
+      "name" : "ROArticle6",
+      "dataArtifact" : "Article6"
+    }
+  ],
+  "options" : {
+    "imports" : [
+      "java.net.URL",
+      "java.util.Date"
+    ],
+    "immutableDefensiveCopy" :true,
+    "immutableCopyDataMember" : "copyData"
+  }
+}

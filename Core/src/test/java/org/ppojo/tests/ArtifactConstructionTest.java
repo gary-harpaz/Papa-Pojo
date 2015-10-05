@@ -37,6 +37,8 @@ public class ArtifactConstructionTest {
         defaultProperties.put(ArtifactOptions.Fields.constantValueCapitalization.toString(),CapitalizationTypes.camelCase);
         defaultProperties.put(ArtifactOptions.Fields.indentString.toString(),"    ");
         defaultProperties.put(ArtifactOptions.Fields.pojoCopyStyles.toString(),EmptyArray.get(CopyStyleData.class));
+        defaultProperties.put(ArtifactOptions.Fields.immutableCopyDataMember .toString(),"");
+        defaultProperties.put(ArtifactOptions.Fields.immutableDefensiveCopy.toString(),false);
         return defaultProperties;
     }
     private static ArtifactOptions _defaultOptions=new ArtifactOptions("Default",newDefaultProperties(),null);;
@@ -84,6 +86,19 @@ public class ArtifactConstructionTest {
         assertSecondaryArtifactFile("copy\\Person10.java");
         assertSecondaryArtifactFile("copy\\Person11.java");
         assertSecondaryArtifactFile("copy\\Person12.java");
+
+        assertSecondaryArtifactFile("immutable\\Article1.java");
+        assertSecondaryArtifactFile("immutable\\Article2.java");
+        assertSecondaryArtifactFile("immutable\\Article3.java");
+        assertSecondaryArtifactFile("immutable\\Article4.java");
+        assertSecondaryArtifactFile("immutable\\Article5.java");
+        assertSecondaryArtifactFile("immutable\\Article6.java");
+        assertSecondaryArtifactFile("immutable\\ROArticle1.java");
+        assertSecondaryArtifactFile("immutable\\ROArticle2.java");
+        assertSecondaryArtifactFile("immutable\\ROArticle3.java");
+        assertSecondaryArtifactFile("immutable\\ROArticle4.java");
+        assertSecondaryArtifactFile("immutable\\ROArticle5.java");
+        assertSecondaryArtifactFile("immutable\\ROArticle6.java");
 
 
         

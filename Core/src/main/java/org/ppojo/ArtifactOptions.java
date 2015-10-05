@@ -33,6 +33,8 @@ public class ArtifactOptions extends MapChain {
         defaultProperties.put(ArtifactOptions.Fields.constantValueCapitalization.toString(),CapitalizationTypes.camelCase);
         defaultProperties.put(ArtifactOptions.Fields.indentString.toString(),"    ");
         defaultProperties.put(ArtifactOptions.Fields.pojoCopyStyles.toString(),EmptyArray.get(CopyStyleData.class));
+        defaultProperties.put(ArtifactOptions.Fields.immutableCopyDataMember .toString(),"");
+        defaultProperties.put(ArtifactOptions.Fields.immutableDefensiveCopy.toString(),false);
         _defaultOptions=new ArtifactOptions("Default",defaultProperties,null);
     }
     public ArtifactOptions(String name,@Nullable Map<String,Object> localProperties, @Nullable ArtifactOptions parent) {
@@ -121,6 +123,14 @@ public class ArtifactOptions extends MapChain {
         return getValue(Fields.pojoCopyStyles);
     }
 
+    public String getimmutableCopyDataMember() {
+        return getValue(Fields.immutableCopyDataMember);
+    }
+
+    public boolean getIsDefensiveCopy() {
+        return getValue(Fields.immutableDefensiveCopy);
+    }
+
     public enum Fields {
         Unknown(null),
         imports(String[].class),
@@ -136,7 +146,9 @@ public class ArtifactOptions extends MapChain {
         constantMemberCapitalization(CapitalizationTypes.class),
         constantValueCapitalization(CapitalizationTypes.class),
         indentString(String.class),
-        pojoCopyStyles(CopyStyleData[].class)
+        pojoCopyStyles(CopyStyleData[].class),
+        immutableCopyDataMember(String.class),
+        immutableDefensiveCopy(boolean.class)
         ;
 
 

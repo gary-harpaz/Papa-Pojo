@@ -1,6 +1,7 @@
 package org.ppojo;
 
 import org.ppojo.data.CopyStyleData;
+import org.ppojo.utils.EmptyArray;
 
 import javax.annotation.Nonnull;
 import java.io.BufferedWriter;
@@ -19,13 +20,27 @@ public class PojoArtifact extends ClassArtifactBase {
             _accessor=new PropertyAccessor();
         else
             _accessor=new FieldAccessor();
+        _forceCopyMember=artifactParser.isForceCopyMember();
+        initCopyStyles();
     }
-    private boolean _encapsulateFields;
-    private IAccessor _accessor;
+    private final boolean _encapsulateFields;
+    private final boolean _forceCopyMember;
+    private final IAccessor _accessor;
+    private CopyStyleData[] _copyStyleDatas;
+    private CopyStyleData _mainCopyStyle;
 
 
+    public boolean hasCopyMember() {
+        return _copyStyleDatas.length>0;
+    }
 
-
+    public CopyStyleTypes getMainCopyStyle() {
+        return  _mainCopyStyle.style;
+    }
+    public String getMainCopyStyleMethod() {
+        return  _mainCopyStyle.methodName;
+    }
+    
     private interface IAccessor {
 
         String formatGetValueMember(String fieldName);
@@ -102,10 +117,20 @@ public class PojoArtifact extends ClassArtifactBase {
         writePojoCopyingMembers(bufferedWriter);
     }
 
-    private void writePojoCopyingMembers(BufferedWriter bufferedWriter) throws IOException {
+    private void initCopyStyles() {
         CopyStyleData[] copyStyles=getOptions().getPojoCopyStyles();
-        if (copyStyles.length==0)
-            return;
+        if (copyStyles.length==0) {
+            if (!_forceCopyMember) {
+                _copyStyleDatas= EmptyArray.get(CopyStyleData.class);
+                return;
+            }
+            else {
+                copyStyles = new CopyStyleData[]{new CopyStyleData()};
+                copyStyles[0].style=CopyStyleTypes.copyConstructor;
+                copyStyles[0].methodName=CopyStyleTypes.copyConstructor.getDefaultMethodName();
+            }
+        }
+
         CopyStyleData mainStyle=copyStyles[0];
         int i=1;
         while (i<copyStyles.length && (mainStyle.style.isFactory())) {
@@ -113,8 +138,8 @@ public class PojoArtifact extends ClassArtifactBase {
             if (!copyStyle.style.isFactory())
                 mainStyle=copyStyle;
             else
-                if (mainStyle.style!=CopyStyleTypes.copyConstructor && copyStyle.style==CopyStyleTypes.copyConstructor)
-                    mainStyle=copyStyle;
+            if (mainStyle.style!=CopyStyleTypes.copyConstructor && copyStyle.style==CopyStyleTypes.copyConstructor)
+                mainStyle=copyStyle;
             i++;
         }
         Arrays.sort(copyStyles,(x,y)-> {
@@ -127,18 +152,23 @@ public class PojoArtifact extends ClassArtifactBase {
             }
             return 0;
         });
+        _copyStyleDatas=copyStyles;
+        _mainCopyStyle=mainStyle;
+    }
 
-        for (CopyStyleData copyStyle : copyStyles) {
+    private void writePojoCopyingMembers(BufferedWriter bufferedWriter) throws IOException {
+
+        for (CopyStyleData copyStyle : _copyStyleDatas) {
             if (copyStyle.style==CopyStyleTypes.copyConstructor) {
                 writeEmptyConstructor(bufferedWriter);
             }
             CopyStyleFormatter formatter=CopyStyleFormatter.getFormatter(copyStyle.style);
             bufferedWriter.append(System.lineSeparator());
             formatter.writeMethodDeclaration(this,copyStyle.methodName,bufferedWriter);
-            if (copyStyle.equals(mainStyle))
+            if (copyStyle.equals(_mainCopyStyle))
                 formatter.writeMethodContent(this, bufferedWriter);
             else
-                formatter.writeMethodCallTo(mainStyle,this,bufferedWriter);
+                formatter.writeMethodCallTo(_mainCopyStyle,this,bufferedWriter);
             setCurrentIndent(1);
             bufferedWriter.append(this.getIndent()).append("}").append(System.lineSeparator());
         }
