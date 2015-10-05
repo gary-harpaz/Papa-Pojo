@@ -1,4 +1,4 @@
 rootProject.name = 'PapaPojo'
-include 'Core'
+include 'Core','CLI'
 //findProject(':Core')?.name = 'papa-pojo.core'
 

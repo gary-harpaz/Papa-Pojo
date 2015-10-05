@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/CLI/CLI.iml" filepath="$PROJECT_DIR$/CLI/CLI.iml" />
       <module fileurl="file://$PROJECT_DIR$/Core/Core.iml" filepath="$PROJECT_DIR$/Core/Core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Core,CLI/Core,CLI.iml" filepath="$PROJECT_DIR$/Core,CLI/Core,CLI.iml" />
       <module fileurl="file://$PROJECT_DIR$/PapaPojo.iml" filepath="$PROJECT_DIR$/PapaPojo.iml" />
     </modules>
   </component>
