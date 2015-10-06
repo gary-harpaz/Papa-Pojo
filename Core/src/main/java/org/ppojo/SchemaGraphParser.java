@@ -1,22 +1,27 @@
 package org.ppojo;
 
 import org.ppojo.data.*;
+import org.ppojo.exceptions.FolderNotFoundException;
+import org.ppojo.exceptions.FolderPathNotADirectory;
 import org.ppojo.utils.Helpers;
 import org.ppojo.utils.ValidationResult;
 
 import javax.annotation.Nonnull;
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 /**
  * Created by GARY on 9/25/2015.
  */
 public class SchemaGraphParser {
 
-    public static void generateArtifacts(@Nonnull Iterable<String> rootSourceFolders,@Nonnull Iterable<ITemplateFileQuery> templateQueries,@Nonnull ArtifactOptions defaultOptions) {
+    public static void generateArtifacts(@Nonnull Iterable<String> rootSourceFolders,@Nonnull Iterable<ITemplateFileQuery> templateQueries,
+                                         @Nonnull ArtifactOptions defaultOptions) {
         if (rootSourceFolders==null)
             throw new NullPointerException("rootSourceFolder");
         if (templateQueries==null)
@@ -25,6 +30,20 @@ public class SchemaGraphParser {
             throw new NullPointerException("defaultOptions");
         SchemaGraphParser schemaGraphParser =new SchemaGraphParser(rootSourceFolders,templateQueries,defaultOptions);
         schemaGraphParser.generateArtifacts();
+    }
+    public static void listMatchedTemplates(@Nonnull Iterable<String> rootSourceFolders,@Nonnull Iterable<ITemplateFileQuery> templateQueries,
+                                         @Nonnull ArtifactOptions defaultOptions) {
+        if (rootSourceFolders==null)
+            throw new NullPointerException("rootSourceFolder");
+        if (templateQueries==null)
+            throw new NullPointerException("templateQueries");
+        if (defaultOptions==null)
+            throw new NullPointerException("defaultOptions");
+        SchemaGraphParser schemaGraphParser =new SchemaGraphParser(rootSourceFolders,templateQueries,defaultOptions);
+        schemaGraphParser.validateAndResolveInputParams();
+        for (String templateFile : schemaGraphParser.getAllTemplates().keySet()) {
+            System.out.println(templateFile);
+        }
     }
     private SchemaGraphParser(Iterable<String> rootSourceFolders, Iterable<ITemplateFileQuery> templateQueries,ArtifactOptions defaultOptions) {
         _templatesByFilePath=new HashMap<>();
@@ -58,7 +77,7 @@ public class SchemaGraphParser {
 
 
     private void generateArtifacts() {
-        queryTemplates();
+        validateAndResolveInputParams();
         deserializeTemplateFiles();
         ValidationResult validationResult=new ValidationResult(_throwFirstErrorException);
         validateTemplates(validationResult);
@@ -187,7 +206,23 @@ public class SchemaGraphParser {
         }
     }
 
-    private void queryTemplates() {
+    public void validateAndResolveInputParams() {
+        ArrayList<String> normalizedSourceFolders=new ArrayList<>();
+        for (String rootSourceFolder : _rootSourceFolders) {
+            Path path=Paths.get(rootSourceFolder).normalize();
+            if (!path.isAbsolute()) {
+                path=path.toAbsolutePath();
+            }
+            File file=path.toFile();
+            if (!file.exists())
+                throw new FolderNotFoundException("Sources folder "+file.toString()+" does not exist");
+            if (!file.isDirectory())
+              throw new FolderPathNotADirectory("Sources folder "+file.toString()+" is not a directory");
+            normalizedSourceFolders.add(path.toString());
+        }
+        _rootSourceFolders=normalizedSourceFolders;
+        if (normalizedSourceFolders.size()==0)
+            throw new IllegalArgumentException("No sources folder provided. Must specify at least one sources folder.");
         for (ITemplateFileQuery templateQuery : _templateQueries) {
             for (String file : templateQuery.getTemplateFiles()) {
                 _templatesByFilePath.put(file,null);
