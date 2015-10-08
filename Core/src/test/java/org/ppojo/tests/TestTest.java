@@ -19,6 +19,7 @@ package org.ppojo.tests;
 import org.junit.Test;
 import org.ppojo.ArtifactTypes;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -101,6 +102,15 @@ public class TestTest {
     }
 
     @Test
+    public  void TestPathWithWildcard() {
+        File file=new File("MyFolder\\*some?.txt");
+        File parent=file.getParentFile();
+        String parent_path=parent.getAbsolutePath();
+
+
+    }
+
+
     public void TestGenericTypes() {
 
         ArrayList<String> arr=new ArrayList<>();
@@ -109,12 +119,6 @@ public class TestTest {
         _stam=arr;
         ArrayList<Path> paths=getSomething();
         paths.add(path);
-
-
-
-
-
-
     }
 
     private static Object _stam;

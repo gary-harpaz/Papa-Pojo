@@ -20,9 +20,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.ppojo.*;
 import org.ppojo.data.CopyStyleData;
-import org.ppojo.utils.ArrayListBuilder;
-import org.ppojo.utils.EmptyArray;
-import org.ppojo.utils.Helpers;
+import org.ppojo.trace.ILoggingService;
+import org.ppojo.trace.LoggingService;
+import org.ppojo.utils.*;
 
 import java.io.File;
 import java.util.HashMap;
@@ -60,7 +60,8 @@ public class ArtifactConstructionTest {
         defaultProperties.put(ArtifactOptions.Fields.fluentResetBuilderName.toString(),"reset");
         return defaultProperties;
     }
-    private static ArtifactOptions _defaultOptions=new ArtifactOptions("Default",newDefaultProperties(),null);;
+    private static ArtifactOptions _defaultOptions=new ArtifactOptions("Default",newDefaultProperties(),null);
+
 
 
     public static ArtifactOptions getDefaultOptions() {
@@ -69,13 +70,15 @@ public class ArtifactConstructionTest {
 
     @Test
     public void constructArtifacts() {
+        ILoggingService loggingService= new LoggingService();
         cleanupPreviousArtifacts();
         String baseSourceFolder= getResourcePath(SchemaTestResources.MainSourcesFolder).toString();
         FolderTemplateFileQuery query=new FolderTemplateFileQuery(baseSourceFolder);
-        SchemaGraphParser.generateArtifacts(
+        SchemaGraphParser schemaGraphParser=new SchemaGraphParser(
                 ArrayListBuilder.newArrayList(baseSourceFolder).create(),
                 ArrayListBuilder.<ITemplateFileQuery>newArrayList(query).create(),
-                _defaultOptions);
+                _defaultOptions,loggingService);
+        schemaGraphParser.generateArtifacts();
 
         assetMainArtifactFile("sampleSimplePojo\\Person.java");
         assetMainArtifactFile("sampleNamingOptions\\Person1.java");

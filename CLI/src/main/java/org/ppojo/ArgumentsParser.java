@@ -17,16 +17,22 @@
 package org.ppojo;
 
 import org.apache.commons.cli.*;
+import org.ppojo.exceptions.FolderNotFoundException;
+import org.ppojo.exceptions.InvalidFolderPathException;
+import org.ppojo.trace.ILoggingService;
+import org.ppojo.utils.Helpers;
 
-import java.nio.file.Path;
+import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by GARY on 10/6/2015.
  */
 public class ArgumentsParser {
-    public static Runnable Parse(Options options, String[] args) throws ParseException {
+    public static Runnable Parse(Options options, String[] args,ILoggingService loggingService) throws ParseException {
+
         CommandLineParser parser = new DefaultParser();
         CommandLine line;
         line = parser.parse( options, args );
@@ -34,30 +40,106 @@ public class ArgumentsParser {
             return ()->HelpPrinter.print(options);
         if (!line.hasOption(OptionNames.SOURCES))
             throw new ParseException("Missing required option sources");
-        ArrayList<String> sourcesFolders=parseSourceFolders(line);
-        ArrayList<ITemplateFileQuery> queries=new ArrayList<>();
-        parseSearchQueries(line,queries);
-        parseTemplateFileArgs(line,queries);
+        SchemaGraphParser schemaGraphParser = getSchemaGraphParser(loggingService, line);
         if (!line.hasOption(OptionNames.LIST))
-            return ()->SchemaGraphParser.generateArtifacts(sourcesFolders,queries,ArtifactOptions.getDefaultOptions());
+            return ()->schemaGraphParser.generateArtifacts();
         else
-            return ()->SchemaGraphParser.listMatchedTemplates(sourcesFolders, queries, ArtifactOptions.getDefaultOptions());
-
-
-
-
-       // String user_dir=System.getProperty("user.dir");
-      //  System.out.println(user_dir);
-      //  Path currentRelativePath = Paths.get("");
-      //  String rel_path = currentRelativePath.toAbsolutePath().toString();
-     //   System.out.println(rel_path);
+            return ()->schemaGraphParser.listMatchedTemplates();
     }
 
-    private static void parseTemplateFileArgs(CommandLine line, ArrayList<ITemplateFileQuery> queries) {
+    public static SchemaGraphParser getSchemaGraphParser(ILoggingService loggingService, CommandLine line) throws ParseException {
+        ArrayList<String> sourcesFolders=parseSourceFolders(line);
+        ArrayList<ITemplateFileQuery> queries=new ArrayList<>();
+        if (!definesQueries(line)) {
+            for (String sourcesFolder : sourcesFolders) {
+                FolderTemplateFileQuery query=new FolderTemplateFileQuery(sourcesFolder,FolderTemplateFileQuery.getDefaultFileFilter(),true);
+                queries.add(query);
+            }
+        }
+        parseSearchQueries(line,queries);
+        parseTemplateFileArgs(line,queries);
+        return new SchemaGraphParser(sourcesFolders,queries, ArtifactOptions.getDefaultOptions(),loggingService);
+    }
 
+    private static boolean definesQueries(CommandLine line) {
+        return line.hasOption(OptionNames.SEARCH) || line.hasOption(OptionNames.TEMPLATE);
+    }
+
+    private static void parseTemplateFileArgs(CommandLine line, ArrayList<ITemplateFileQuery> queries) throws ParseException {
+        if (line.hasOption(OptionNames.SEARCH)) {
+            Option[] options=line.getOptions();
+            for (Option option : options) {
+                if (option.getOpt()==OptionNames.SEARCH) {
+                    List<String> values=option.getValuesList();
+                    if (values==null || values.size()!=2)
+                        throw new ParseException("Invalid values for search option. Expected two arguments for option.");
+                    boolean isRecursive=parserIsRecursive(values.get(0));
+
+                    String fileFilter=FolderTemplateFileQuery.getDefaultFileFilter();
+                    String folderPath=null;
+                    File file=(new File(values.get(1))).getAbsoluteFile();
+                    boolean exists=file.exists();
+                    boolean isDirectory=file.isDirectory();
+                    if (exists) {
+                        if (isDirectory) //folder path specification with omitted pattern
+                            folderPath=file.getAbsolutePath();
+                        else
+                            if (file.isFile()) { //the pattern resolves to a specific file
+                                TemplateFileQuery templateFileQuery=new TemplateFileQuery(file.getAbsolutePath(),true);
+                                queries.add(templateFileQuery);
+                            }
+                            else
+                                throw new ParseException("Invalid value for search option. Existing path value is neither a file or directory");
+
+                    }
+                    else {
+                        File parentFile=file.getParentFile();
+                        if (!parentFile.exists())
+                            throw new FolderNotFoundException("Invalid value for search option. The folder path "+parentFile.getAbsolutePath()+" does not exist");
+                        if (!parentFile.isDirectory())
+                            throw new InvalidFolderPathException("Invalid value for search option. The folder path "+parentFile.getAbsolutePath()+" is not a folder");
+                        String replaceStr=parentFile.toString();
+                        if (!replaceStr.endsWith(File.separator))
+                            replaceStr+= File.separator;
+                        fileFilter=file.toString().replace(replaceStr, "");
+                        folderPath=parentFile.getAbsolutePath();
+                    }
+                    if (!Helpers.IsNullOrEmpty(folderPath)){
+                        folderPath= Paths.get(folderPath).normalize().toString();
+                        FolderTemplateFileQuery query=new FolderTemplateFileQuery(folderPath,fileFilter,isRecursive);
+                        queries.add(query);
+                    }
+                }
+            }
+
+        }
+
+    }
+    private static boolean parserIsRecursive(String arg) throws ParseException {
+        boolean isRecursive=true;
+        switch (arg) {
+            case "r":
+                isRecursive=true;
+                break;
+            case "nr":
+                isRecursive=false;
+                break;
+            default:
+                throw new ParseException("Invalid value for search option. Expected either r or nr got "+arg);
+        }
+        return isRecursive;
     }
 
     private static void parseSearchQueries(CommandLine line, ArrayList<ITemplateFileQuery> queries) {
+        if (line.hasOption(OptionNames.TEMPLATE)) {
+            String[] values=line.getOptionValues(OptionNames.TEMPLATE);
+            if (values!=null) {
+                for (String value : values) {
+                    TemplateFileQuery query=new TemplateFileQuery(value,false);
+                    queries.add(query);
+                }
+            }
+        }
 
     }
 

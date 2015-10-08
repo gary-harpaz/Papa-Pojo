@@ -19,6 +19,8 @@ package org.ppojo;
 import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 
+import java.io.File;
+
 /**
  * Created by GARY on 10/6/2015.
  */
@@ -39,9 +41,9 @@ public class OptionsProvider {
                 .desc("Path to template file for generating source files. File path can be a relative path and multiple template options can be specified.")
                 .build();
         Option list=new Option(OptionNames.LIST,"lists all template files matched but don't process them");
-        Option search=Option.builder(OptionNames.SEARCH).numberOfArgs(2).hasArgs().argName("r|nr folder[\\pattern]")
+        Option search=Option.builder(OptionNames.SEARCH).numberOfArgs(2).argName("r|nr folder[" + File.separator + "pattern]")
                 .desc("Searches a folder for  template files. The first argument determines whether the search is recursive (r) or non recursive (nr)." +
-                        " The second argument is a path to the folder optionally ending with a pattern for matching template files. When omitted a default pattern value of *.pppj is used." +
+                        " The second argument is a path to the folder optionally ending with a pattern for matching template files. When omitted a default pattern value of " + FolderTemplateFileQuery.getDefaultFileFilter() + " is used." +
                         " Folder path can be a relative path and multiple searches can be specified.").build();
 
 

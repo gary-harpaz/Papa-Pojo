@@ -23,6 +23,9 @@ import org.ppojo.FolderTemplateFileQuery;
 import org.ppojo.ITemplateFileQuery;
 import org.ppojo.SchemaGraphParser;
 import org.ppojo.exceptions.RequiredPropertyMissing;
+import org.ppojo.utils.Helpers;
+import org.ppojo.trace.ILoggingService;
+import org.ppojo.trace.LoggingService;
 
 /**
  * Created by GARY on 9/29/2015.
@@ -46,9 +49,11 @@ public class ArtifactValidationTests {
     private static void DoValidationTest(String queryRootReltaiveFolder) {
         String rootQueryFolder= SchemaTestResources.getValidationTestQueryRootFolder(queryRootReltaiveFolder);
         FolderTemplateFileQuery query=new FolderTemplateFileQuery(rootQueryFolder);
-        SchemaGraphParser.generateArtifacts(
-                ArrayListBuilder.newArrayList(SchemaTestResources.MainValidationTestSourcesFolder).create(),
+        ILoggingService loggingService=new LoggingService();
+        SchemaGraphParser schemaGraphParser=new SchemaGraphParser(
+                ArrayListBuilder.newArrayList(Helpers.getResourcePath(SchemaTestResources.MainValidationTestSourcesFolder).toString()).create(),
                 ArrayListBuilder.<ITemplateFileQuery>newArrayList(query).create(),
-                ArtifactConstructionTest.getDefaultOptions());
+                ArtifactConstructionTest.getDefaultOptions(),loggingService);
+        schemaGraphParser.generateArtifacts();
     }
 }

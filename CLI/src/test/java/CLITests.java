@@ -16,43 +16,90 @@
 
 import org.apache.commons.cli.MissingArgumentException;
 import org.apache.commons.cli.ParseException;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.ppojo.FolderTemplateFileQuery;
 import org.ppojo.Main;
 import org.ppojo.OptionNames;
 import org.ppojo.exceptions.FolderNotFoundException;
 import org.ppojo.exceptions.FolderPathNotADirectory;
+import org.ppojo.trace.ExecutingTemplateQuery;
+import org.ppojo.trace.ILoggingService;
+import org.ppojo.trace.ITraceEvent;
+import org.ppojo.trace.LoggingService;
 
 import java.nio.file.Paths;
+import java.util.ArrayList;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * Created by GARY on 10/6/2015.
  */
 public class CLITests {
-    private static final String TEST_ROOT_SOURCE_FOLDER1="build/resources/test/test-root-source-folder";
-    private static final String TEST_FILE_TXT="test-file.txt";
+    public static final String TEST_ROOT_SOURCE_FOLDER1="build/resources/test/test-root-source-folder";
+    public static final String TEST_ROOT_SOURCE_FOLDER2="build/resources/test/test-root-source-folder2";
+    public static final String TEST_FILE_TXT="test-file.txt";
+
+    private static LoggingService _loggingService;
+
+    @Before
+    public void InitTest() {
+        _loggingService=new LoggingService();
+    }
+
+    @After
+    public void CleanupTest() {
+        _loggingService=null;
+    }
+
 
     @Test(expected = ParseException.class)
-    public void sourcesArgumentTest1() throws ParseException {
-        Main.runMain(new String[] {});
+    public void sourcesArgumentTest1() throws Throwable {
+        Main.runMain(new String[]{}, _loggingService);
     }
     @Test(expected = MissingArgumentException.class)
-    public void sourcesArgumentTest2() throws ParseException {
-        Main.runMain(new String[] {"-"+ OptionNames.SOURCES});
+    public void sourcesArgumentTest2() throws Throwable {
+        Main.runMain(new String[]{"-" + OptionNames.SOURCES},_loggingService);
     }
     @Test(expected = FolderNotFoundException.class)
-    public void sourcesArgumentTest3() throws ParseException {
-        Main.runMain(new String[] {"-"+OptionNames.SOURCES,"xyz"});
+    public void sourcesArgumentTest3() throws Throwable {
+        Main.runMain(new String[]{"-" + OptionNames.SOURCES, "xyz"},_loggingService);
     }
     @Test(expected = FolderPathNotADirectory.class)
-    public void sourcesArgumentTest4() throws ParseException {
-        Main.runMain(new String[] {"-"+OptionNames.SOURCES, Paths.get(TEST_ROOT_SOURCE_FOLDER1,TEST_FILE_TXT).toString()});
+    public void sourcesArgumentTest4() throws Throwable {
+        Main.runMain(new String[]{"-" + OptionNames.SOURCES, Paths.get(TEST_ROOT_SOURCE_FOLDER1, TEST_FILE_TXT).toString()},_loggingService);
     }
 
-    @Test
-    public void sourcesArgumentTest5() throws ParseException {
-        Main.runMain(new String[] {"-"+OptionNames.SOURCES,TEST_ROOT_SOURCE_FOLDER1});
+    @Test(expected = ParseException.class)
+    public void searchArgumentsTest1() throws ParseException {
+        Main.runMain(new String[]{"-"+OptionNames.LIST,
+                "-" + OptionNames.SOURCES, Paths.get(TEST_ROOT_SOURCE_FOLDER1).toString(),
+                "-"+OptionNames.SEARCH,"a","abc"},
+                _loggingService);
     }
+    @Test()
+    public void searchArgumentsTest2() throws ParseException {
+        try {
+            Main.runMain(new String[]{"-" + OptionNames.LIST,
+                            "-" + OptionNames.SOURCES, Paths.get(TEST_ROOT_SOURCE_FOLDER1).toString(),
+                            "-" + OptionNames.SEARCH, "nr", "../",
+                            "-" + OptionNames.SEARCH, "nr", "abc",
+                            "-" + OptionNames.TEMPLATE,"CLI.iml",
+                            "-"+OptionNames.SOURCES,Paths.get(TEST_ROOT_SOURCE_FOLDER2).toString()
+                    },
+                    _loggingService);
+        }
+        catch (Exception ex) {
+           throw ex;
 
+
+        }
+       // System.out.println(_loggingService.getLog());
+
+    }
 
 
 }

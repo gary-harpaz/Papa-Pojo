@@ -17,14 +17,21 @@
 package org.ppojo;
 
 import org.apache.commons.cli.*;
+import org.ppojo.utils.Helpers;
+import org.ppojo.trace.ILoggingService;
+import org.ppojo.trace.LoggingService;
 
 /**
  * Created by GARY on 10/6/2015.
  */
 public class Main {
+
+    private static ILoggingService _loggingService =new LoggingService();
     public static void main(String[] args) {
+        boolean success=false;
         try {
-            runMain(args);
+            runMain(args, _loggingService);
+            success=true;
         }
         catch( ParseException exp ) {
             System.err.println(exp.getMessage());
@@ -33,11 +40,26 @@ public class Main {
         catch (Exception exp2) {
             System.err.println(exp2.toString());
         }
-        System.exit(1);
+        tryPrintLog();
+        if (success)
+            System.exit(0);
+        else
+            System.exit(1);
     }
-    public static void runMain(String[] args) throws ParseException {
+
+    private static void tryPrintLog() {
+        String log=_loggingService.getLog();
+        if (!Helpers.IsNullOrEmpty(log))
+            System.out.println(log);
+    }
+
+    public static void runMain(String[] args,ILoggingService loggingService) throws ParseException {
+        if (loggingService==null)
+            throw new NullPointerException("loggingService");
         Options options = OptionsProvider.Provide();
-        Runnable command=ArgumentsParser.Parse(options,args);
+        Runnable command=ArgumentsParser.Parse(options,args,loggingService);
         command.run();
+
     }
+
 }

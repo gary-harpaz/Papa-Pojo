@@ -16,6 +16,7 @@
 
 package org.ppojo;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.ppojo.data.TemplateFileData;
 import org.ppojo.exceptions.FolderNotFoundException;
 import org.ppojo.exceptions.InvalidFolderPathException;
 
@@ -34,8 +35,22 @@ import static org.ppojo.utils.Helpers.IsNullOrEmpty;
  * Created by GARY on 9/24/2015.
  */
 public class FolderTemplateFileQuery implements ITemplateFileQuery {
+    public String getPath() {
+        return _path;
+    }
+
     private final String _path;
+
+    public String getFileFilter() {
+        return _fileFilter;
+    }
+
     private final String _fileFilter;
+
+    public boolean isRecursive() {
+        return _isRecursive;
+    }
+
     private final boolean _isRecursive;
     public FolderTemplateFileQuery(String path) {
         this(path,null,true);
@@ -44,9 +59,13 @@ public class FolderTemplateFileQuery implements ITemplateFileQuery {
     public FolderTemplateFileQuery(String path,String fileFilter,boolean isRecursive) {
         _path=path;
         if (IsNullOrEmpty(fileFilter))
-            fileFilter="*.pppj";
+            fileFilter=getDefaultFileFilter();
         _fileFilter=fileFilter;
         _isRecursive=isRecursive;
+    }
+
+    public static String getDefaultFileFilter() {
+        return "*."+ TemplateFileData.FILE_EXTENSION;
     }
 
 

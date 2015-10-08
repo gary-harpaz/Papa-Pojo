@@ -19,13 +19,14 @@ package org.ppojo;
 import org.ppojo.data.*;
 import org.ppojo.exceptions.FolderNotFoundException;
 import org.ppojo.exceptions.FolderPathNotADirectory;
+import org.ppojo.trace.*;
 import org.ppojo.utils.Helpers;
 import org.ppojo.utils.ValidationResult;
 
-import javax.annotation.Nonnull;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,46 +37,38 @@ import java.util.Map;
  */
 public class SchemaGraphParser {
 
-    public static void generateArtifacts(@Nonnull Iterable<String> rootSourceFolders,@Nonnull Iterable<ITemplateFileQuery> templateQueries,
-                                         @Nonnull ArtifactOptions defaultOptions) {
+    public SchemaGraphParser(Iterable<String> rootSourceFolders, Iterable<ITemplateFileQuery> templateQueries,ArtifactOptions defaultOptions
+    ,ILoggingService loggingService) {
         if (rootSourceFolders==null)
             throw new NullPointerException("rootSourceFolder");
         if (templateQueries==null)
             throw new NullPointerException("templateQueries");
         if (defaultOptions==null)
             throw new NullPointerException("defaultOptions");
-        SchemaGraphParser schemaGraphParser =new SchemaGraphParser(rootSourceFolders,templateQueries,defaultOptions);
-        schemaGraphParser.generateArtifacts();
-    }
-    public static void listMatchedTemplates(@Nonnull Iterable<String> rootSourceFolders,@Nonnull Iterable<ITemplateFileQuery> templateQueries,
-                                         @Nonnull ArtifactOptions defaultOptions) {
-        if (rootSourceFolders==null)
-            throw new NullPointerException("rootSourceFolder");
-        if (templateQueries==null)
-            throw new NullPointerException("templateQueries");
-        if (defaultOptions==null)
-            throw new NullPointerException("defaultOptions");
-        SchemaGraphParser schemaGraphParser =new SchemaGraphParser(rootSourceFolders,templateQueries,defaultOptions);
-        schemaGraphParser.validateAndResolveInputParams();
-        for (String templateFile : schemaGraphParser.getAllTemplates().keySet()) {
-            System.out.println(templateFile);
-        }
-    }
-    private SchemaGraphParser(Iterable<String> rootSourceFolders, Iterable<ITemplateFileQuery> templateQueries,ArtifactOptions defaultOptions) {
         _templatesByFilePath=new HashMap<>();
         _allArtifactsByArtifactKey =new HashMap<>();
         _rootSourceFolders=rootSourceFolders;
         _templateQueries=templateQueries;
         _defaultOptions=defaultOptions;
+        _loggingService =loggingService;
     }
 
     private final ArtifactOptions _defaultOptions;
     private Iterable<String> _rootSourceFolders;
+
     private Iterable<ITemplateFileQuery> _templateQueries;
     private Map<String,TemplateFileParser> _templatesByFilePath;
     private Map<String,ArtifactParser> _allArtifactsByArtifactKey;
     private boolean _throwFirstErrorException=true;
     private boolean _allParsersValid=false;
+    private final ILoggingService _loggingService;
+
+
+
+
+    public  void appendLineToLog(String message) {
+        _loggingService.appendLine(message);
+    }
 
     public Map<String,TemplateFileParser> getAllTemplates() {
         return _templatesByFilePath;
@@ -89,10 +82,16 @@ public class SchemaGraphParser {
     public void setThrowFirstErrorException(boolean throwFirstErrorException) {
         _throwFirstErrorException = throwFirstErrorException;
     }
+    public Iterable<ITemplateFileQuery> getTemplateQueries() {
+        return _templateQueries;
+    }
 
 
 
-    private void generateArtifacts() {
+
+    public void generateArtifacts() {
+        ZonedDateTime zonedDateTime = ZonedDateTime.now();
+        appendLineToLog(zonedDateTime.toLocalDate().toString()+" SchemaGraphParser.generateArtifacts");
         validateAndResolveInputParams();
         deserializeTemplateFiles();
         ValidationResult validationResult=new ValidationResult(_throwFirstErrorException);
@@ -110,18 +109,17 @@ public class SchemaGraphParser {
             _allParsersValid=false;
     }
 
+    public void listMatchedTemplates() {
+        ZonedDateTime zonedDateTime = ZonedDateTime.now();
+        appendLineToLog(zonedDateTime.toLocalDate().toString()+" SchemaGraphParser.listMatchedTemplates");
+        validateAndResolveInputParams();
+    }
+
+
+
     private SchemaGraph generateGraph() {
         assertAllValid();
         List<ArtifactFile> artifactFiles=new ArrayList<>();
-/*
-        for (ArtifactParser artifactParser : _allArtifactsByArtifactKey.values()) {
-            if (artifactParser.getArtifactBase()!=null) //artifact already created through recursion skip ahead
-                continue;
-            ArtifactFile artifactFile=artifactParser.getArtifactFile();
-            artifactFiles.add(artifactFile);
-            ArtifactBase artifactBase=newArtifact(artifactParser,artifactFile);
-            artifactParser.setArtifactBase(artifactBase);
-        } */
         generateGraphRecursive(artifactFiles,_allArtifactsByArtifactKey.values());
         return new SchemaGraph(artifactFiles);
 
@@ -234,19 +232,31 @@ public class SchemaGraphParser {
                 throw new FolderNotFoundException("Sources folder "+file.toString()+" does not exist");
             if (!file.isDirectory())
               throw new FolderPathNotADirectory("Sources folder "+file.toString()+" is not a directory");
-            normalizedSourceFolders.add(path.toString());
+            String pathStr=path.toString();
+            normalizedSourceFolders.add(pathStr);
+            addTraceEvent(new ValidatedSourceFolderPath(pathStr));
         }
         _rootSourceFolders=normalizedSourceFolders;
         if (normalizedSourceFolders.size()==0)
             throw new IllegalArgumentException("No sources folder provided. Must specify at least one sources folder.");
+        addTraceEvent(new ValidatedSourceFolders(normalizedSourceFolders.size()));
         for (ITemplateFileQuery templateQuery : _templateQueries) {
+            addTraceEvent(new ExecutingTemplateQuery(templateQuery));
             for (String file : templateQuery.getTemplateFiles()) {
+                boolean isDuplicate=_templatesByFilePath.containsKey(file);
                 _templatesByFilePath.put(file,null);
+                addTraceEvent(new QueryTemplateFileMatch(file,isDuplicate));
             }
         }
+        addTraceEvent(new ExectuedTemplateQueries(_templatesByFilePath.size()));
+    }
+
+    private void addTraceEvent(ITraceEvent event) {
+        _loggingService.addTraceEvent(event);
     }
 
     public Iterable<String> getRootSourceFolders() {
         return _rootSourceFolders;
     }
+
 }
