@@ -14,15 +14,13 @@
  * limitations under the License.
  */
 
-package org.ppojo;
+package org.ppojo.exceptions;
 
 /**
- * Created by GARY on 9/25/2015.
+ * Created by GARY on 10/8/2015.
  */
-public enum TemplateSchemaRelationTypes {
-    Unknown,
-    SchemaSource,
-    SchemaLink,
-    SubSchema,
-    OptionsConfig
+public class DuplicateOptionsFileInFolder extends RuntimeException{
+    public DuplicateOptionsFileInFolder(String message) {
+        super(message);
+    }
 }

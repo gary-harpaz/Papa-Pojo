@@ -1,0 +1,23 @@
+{
+  "options" : {
+	"privateFieldPrefix" : "_",
+    "encapsulateFields" : true,
+    "propertyCapitalization" : "camelCase",
+    "publicFieldCapitalization" : "camelCase",
+    "getterPrefix" : "get",
+    "setterPrefix" : "set",
+    "privateFieldName" : "data",
+    "imports" : [],
+    "enumCapitalization" : "camelCase",
+    "undefinedMember" : "",
+    "constantMemberCapitalization" : "ALL_CAPS",
+    "constantValueCapitalization" : "camelCase",
+    "indentString" : "    ",
+    "pojoCopyStyles" : [],
+    "immutableCopyDataMember" : "",
+    "immutableDefensiveCopy" : false,
+    "fluentNewBuilderName" : "newBuilder",
+    "fluentGetDataName" : "getData",
+    "fluentResetBuilderName" : "reset"
+  }
+}

@@ -35,6 +35,16 @@ public class TemplateFileParser {
         _rawData=rawData;
         _schemaRelationType=_rawData.getSchemaRelationTypes();
         _defaultOptions=defaultOptions;
+        switch (rawData.getSchemaRelationTypes()) {
+            case SchemaLink:
+            case SubSchema:
+                //delay the creation of options until the linked template is resolved
+                break;
+            default:
+                createOptions();
+                break;
+
+        }
     }
 
     private final ArtifactOptions _defaultOptions;
@@ -93,6 +103,9 @@ public class TemplateFileParser {
             case SubSchema:
                 validateSubSchema(schemaGraphParser, validationResult);
                 break;
+            case OptionsConfig:
+                //TODO how to validate options config
+                break;
             case Unknown:
                 validateUnknown(validationResult);
                 break;
@@ -100,16 +113,20 @@ public class TemplateFileParser {
                 throw new RuntimeException("Not implemented " + _schemaRelationType);
         }
         if (validationResult.getErrors().size() == initialErrorSize) {
-            ArtifactOptions parentOptions = _defaultOptions;
-            if (_linkedTemplate != null)
-                parentOptions = _linkedTemplate.getOptions();
-            _options = new ArtifactOptions("Template file " + _filePath, _rawData.options, parentOptions);
-
+            if (_options==null)
+                createOptions();
             resolveSchema();
             _isValid = true;
             return false;
         }
         return true;
+    }
+
+    private void createOptions() {
+        ArtifactOptions parentOptions = _defaultOptions;
+        if (_linkedTemplate != null)
+            parentOptions = _linkedTemplate.getOptions();
+        _options = new ArtifactOptions("Template file " + _filePath, _rawData.options, parentOptions);
     }
 
     private void resolveSchema() {
@@ -124,6 +141,9 @@ public class TemplateFileParser {
                 break;
             case SchemaLink:
                 resolveSchemaLink();
+                break;
+            case OptionsConfig:
+                //TODO resolve options config
                 break;
             default:
                 throw new RuntimeException("Not implemented "+_schemaRelationType);

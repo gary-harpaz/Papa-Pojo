@@ -16,7 +16,9 @@
 
 package org.ppojo;
 
+import javafx.util.Pair;
 import org.ppojo.data.*;
+import org.ppojo.exceptions.DuplicateOptionsFileInFolder;
 import org.ppojo.exceptions.FolderNotFoundException;
 import org.ppojo.exceptions.FolderPathNotADirectory;
 import org.ppojo.trace.*;
@@ -27,10 +29,7 @@ import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by GARY on 9/25/2015.
@@ -211,6 +210,8 @@ public class SchemaGraphParser {
         }
     }
 
+
+/*
     private void deserializeTemplateFiles() {
         Serializer serializer=new Serializer();
         for (String file : _templatesByFilePath.keySet()) {
@@ -218,6 +219,80 @@ public class SchemaGraphParser {
             TemplateFileData rawData=serializer.deserialize(json,file);
             _templatesByFilePath.put(file,new TemplateFileParser(file,rawData,_defaultOptions));
         }
+    }
+    */
+    private void deserializeTemplateFiles() {
+        Serializer serializer=new Serializer();
+
+        HashMap<String,Pair<String,TemplateFileData>> defaultOptionsFilesByFolder=new HashMap<>();
+        HashMap<String,TemplateFileData> regularTemplatesByFileName=new HashMap<>();
+
+        for (String file : _templatesByFilePath.keySet()) {
+            String json = Helpers.readTextFile(file);
+            TemplateFileData rawData = serializer.deserialize(json, file);
+            if (rawData.getSchemaRelationTypes()!=TemplateSchemaRelationTypes.OptionsConfig)
+                regularTemplatesByFileName.put(file,rawData);
+            else
+            {
+                String folderPath=(new File(file)).getParent();
+                Pair<String,TemplateFileData> templateFileDataPair=defaultOptionsFilesByFolder.get(folderPath);
+                if (templateFileDataPair!=null)
+                    throw new DuplicateOptionsFileInFolder("Duplicate option files are located in folder "+folderPath+
+                            " this is not allowed. files are "+templateFileDataPair.getKey()+" and "+file);
+                templateFileDataPair=new Pair<>(file,rawData);
+                defaultOptionsFilesByFolder.put(folderPath,templateFileDataPair);
+            }
+        }
+        ArrayList<Pair<String,TemplateFileData>> pairArrayList=new ArrayList<>(defaultOptionsFilesByFolder.values());
+        while (pairArrayList.size()>0) {
+            int prev_size=pairArrayList.size();
+            for (int i=pairArrayList.size()-1; i>=0; i--) {
+                Pair<String,TemplateFileData> pair=pairArrayList.get(i);
+                String fileName=pair.getKey();
+                TemplateFileData rawData=pair.getValue();
+                String searchChildPath=Paths.get(fileName).getParent().toString();
+                if (newTemplateFileParser(searchChildPath,fileName,rawData,defaultOptionsFilesByFolder)) {
+                    pairArrayList.remove(i);
+                }
+            }
+            if (prev_size==pairArrayList.size())
+                throw new RuntimeException("Invalid state in deserializeTemplateFiles. Can not resolve tree dependency of options");
+        }
+
+        regularTemplatesByFileName.forEach((k,v)->{
+            newTemplateFileParser(k,k,v,defaultOptionsFilesByFolder);
+        });
+    }
+    private boolean newTemplateFileParser(String searchChildPath,String fileName,TemplateFileData rawData,
+                                          HashMap<String,Pair<String,TemplateFileData>> defaultOptionsFilesByFolder) {
+        String parentOptionsFolder=getClosestParentOptionFolder(searchChildPath,defaultOptionsFilesByFolder.keySet());
+        ArtifactOptions parentOptions=null;
+        if (Helpers.IsNullOrEmpty(parentOptionsFolder))
+            parentOptions=_defaultOptions;
+        else {
+            Pair<String,TemplateFileData> parentOptionsFile=defaultOptionsFilesByFolder.get(parentOptionsFolder);
+            TemplateFileParser parentParser=_templatesByFilePath.get(parentOptionsFile.getKey());
+            if (parentParser!=null) //else it might get created in the next while iteration
+                parentOptions=parentParser.getOptions();
+        }
+        if (parentOptions!=null) {
+            _templatesByFilePath.put(fileName,new TemplateFileParser(fileName,rawData,parentOptions));
+            return true;
+        }
+        return false;
+    }
+
+    private String getClosestParentOptionFolder(String searchChildPath, Iterable<String> paths) {
+        String match=null;
+        ArrayList<String> matches=new ArrayList<>();
+        for (String path : paths) {
+            if (!searchChildPath.equals(path) && searchChildPath.startsWith(path))
+                matches.add(path);
+        }
+        if (matches.size()>0) {
+            match=matches.stream().max((x, y) -> ((Integer)x.length()).compareTo(y.length())).get();
+        }
+        return match;
     }
 
     public void validateAndResolveInputParams() {

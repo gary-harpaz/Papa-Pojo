@@ -42,6 +42,9 @@ public class TemplateFileData {
             else
                 if (!Helpers.IsNullOrEmpty(linkTo))
                     return TemplateSchemaRelationTypes.SchemaLink;
+                else
+                  if (options!=null)
+                      return TemplateSchemaRelationTypes.OptionsConfig;
         return TemplateSchemaRelationTypes.Unknown;
     }
     public static final String FILE_EXTENSION = "pppj";
