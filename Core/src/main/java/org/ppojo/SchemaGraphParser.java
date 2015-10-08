@@ -121,7 +121,7 @@ public class SchemaGraphParser {
         assertAllValid();
         List<ArtifactFile> artifactFiles=new ArrayList<>();
         generateGraphRecursive(artifactFiles,_allArtifactsByArtifactKey.values());
-        return new SchemaGraph(artifactFiles);
+        return new SchemaGraph(artifactFiles,_loggingService);
 
     }
     private void generateGraphRecursive(List<ArtifactFile> artifactFiles,Iterable<ArtifactParser> artifactParsers) {
@@ -248,7 +248,7 @@ public class SchemaGraphParser {
                 addTraceEvent(new QueryTemplateFileMatch(file,isDuplicate));
             }
         }
-        addTraceEvent(new ExectuedTemplateQueries(_templatesByFilePath.size()));
+        addTraceEvent(new ExecutedTemplateQueries(_templatesByFilePath.size()));
     }
 
     private void addTraceEvent(ITraceEvent event) {

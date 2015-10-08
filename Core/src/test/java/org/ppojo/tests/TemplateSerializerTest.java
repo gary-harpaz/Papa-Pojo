@@ -20,6 +20,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.ppojo.*;
 import org.ppojo.data.*;
+import org.ppojo.trace.LoggingService;
 import org.ppojo.utils.ArrayListBuilder;
 
 import java.util.HashMap;
@@ -80,7 +81,7 @@ public class TemplateSerializerTest {
         ArtifactOptions artifactOptions=new ArtifactOptions("test options newSimplePojoSchema",options,null);
         when(artifactParser.getOptions()).thenReturn(artifactOptions);
 
-        SchemaGraph schemaGraph=new SchemaGraph(ArrayListBuilder.newArrayList(file).create());
+        SchemaGraph schemaGraph=new SchemaGraph(ArrayListBuilder.newArrayList(file).create(),new LoggingService());
 
         PojoArtifactBuilder.newBuilder(file,artifactParser).create();
         return schemaGraph;

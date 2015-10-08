@@ -19,6 +19,10 @@ package org.ppojo;
 import org.ppojo.data.ArtifactData;
 import org.ppojo.data.ClassArtifactData;
 import org.ppojo.data.TemplateFileData;
+import org.ppojo.trace.AllArtifactsCreated;
+import org.ppojo.trace.CreatedArtifactFile;
+import org.ppojo.trace.ILoggingService;
+import org.ppojo.trace.ITraceEvent;
 import org.ppojo.utils.Helpers;
 
 import java.io.BufferedWriter;
@@ -34,15 +38,19 @@ import java.util.*;
  */
 public class SchemaGraph {
     private final Iterable<ArtifactFile> _artifactFiles;
-    public SchemaGraph(Iterable<ArtifactFile> artifactFiles) {
+    private final ILoggingService _loggingService;
+    public SchemaGraph(Iterable<ArtifactFile> artifactFiles,ILoggingService loggingService) {
         _artifactFiles=artifactFiles;
+        _loggingService=loggingService;
     }
 
     public void produceArtifactFiles() {
+        int index=0;
         for (ArtifactFile artifactFile : _artifactFiles) {
             produceArtifactFiles(artifactFile);
+            index++;
         }
-
+        addTraceEvent(new AllArtifactsCreated(index));
     }
 
     private void produceArtifactFiles(ArtifactFile artifactFile) {
@@ -58,6 +66,7 @@ public class SchemaGraph {
                 }
             }
             com.google.common.io.Files.move(new File(tempArtifactFilename),new File(artifactFile.getArtifactFileName()));
+            addTraceEvent(new CreatedArtifactFile(artifactFile.getArtifactFileName()));
         }
         catch (IOException ioException) {
             caughtException=new RuntimeException(ioException);
@@ -166,4 +175,12 @@ public class SchemaGraph {
 
         return templates;
     }
+
+    public  void appendLineToLog(String message) {
+        _loggingService.appendLine(message);
+    }
+    private void addTraceEvent(ITraceEvent event) {
+        _loggingService.addTraceEvent(event);
+    }
+
 }

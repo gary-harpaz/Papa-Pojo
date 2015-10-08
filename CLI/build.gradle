@@ -8,6 +8,7 @@ archivesBaseName = 'papa-pojo.cli'
 
 sourceCompatibility = 8
 mainClassName = "org.ppojo.Main"
+applicationName='papa-pojo'
 
 repositories {
     mavenCentral()
