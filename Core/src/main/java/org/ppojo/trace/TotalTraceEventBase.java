@@ -17,16 +17,11 @@
 package org.ppojo.trace;
 
 /**
- * Created by GARY on 10/8/2015.
+ * Created by GARY on 10/9/2015.
  */
-public class AllArtifactsCreated extends TotalTraceEventBase {
-
-    public AllArtifactsCreated(int total) {
-        super(total);
-    }
-
-    @Override
-    public String toLogMessage() {
-        return "Completed artifact creation total number of artifacts "+_total;
+public abstract class TotalTraceEventBase implements ITraceEvent {
+    protected final int _total;
+    public TotalTraceEventBase(int total) {
+        _total=total;
     }
 }

@@ -45,6 +45,7 @@ public class HelpPrinter {
             _optionOrder.add(OptionNames.SEARCH);
             _optionOrder.add(OptionNames.TEMPLATE);
             _optionOrder.add(OptionNames.LIST);
+            _optionOrder.add(OptionNames.CLEAN);
             _optionOrder.add(OptionNames.HELP);
         }
 

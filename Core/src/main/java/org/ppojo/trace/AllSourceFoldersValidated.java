@@ -19,14 +19,15 @@ package org.ppojo.trace;
 /**
  * Created by GARY on 10/8/2015.
  */
-public class AllArtifactsCreated extends TotalTraceEventBase {
+public class AllSourceFoldersValidated extends TotalTraceEventBase {
 
-    public AllArtifactsCreated(int total) {
+
+    public AllSourceFoldersValidated(int total) {
         super(total);
     }
 
     @Override
     public String toLogMessage() {
-        return "Completed artifact creation total number of artifacts "+_total;
+        return "Completed validating source folders. Found "+_total+" folders.";
     }
 }

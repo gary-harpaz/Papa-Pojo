@@ -14,10 +14,23 @@
  * limitations under the License.
  */
 
-package org.ppojo;
+package org.ppojo.trace;
 
 /**
- * Created by GARY on 10/6/2015.
+ * Created by GARY on 10/9/2015.
  */
-public class Arguments {
+public class AllArtifactsDeleted extends TotalTraceEventBase {
+    public AllArtifactsDeleted(int total,boolean listOnly) {
+        super(total);
+        _listOnly=listOnly;
+    }
+    private final boolean _listOnly;
+
+    @Override
+    public String toLogMessage() {
+        if (!_listOnly)
+            return "Deleted all artifacts. Total "+_total+" artifacts deleted";
+        else
+            return "Matched "+_total+" artifacts for deletion";
+    }
 }

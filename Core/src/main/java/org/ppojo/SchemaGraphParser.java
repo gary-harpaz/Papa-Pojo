@@ -114,6 +114,37 @@ public class SchemaGraphParser {
         validateAndResolveInputParams();
     }
 
+    public void cleanArtifacts(boolean listOnly) {
+        ZonedDateTime zonedDateTime = ZonedDateTime.now();
+        appendLineToLog(zonedDateTime.toLocalDate().toString()+" SchemaGraphParser.cleanArtifacts");
+        validateAndResolveInputParams();
+        deserializeTemplateFiles();
+        ValidationResult validationResult=new ValidationResult(_throwFirstErrorException);
+        validateTemplates(validationResult);
+        validateArtifacts(validationResult);
+        int total_deleted=0;
+        if (!validationResult.hasErrors()) {
+            for (ArtifactParser parser : _allArtifactsByArtifactKey.values()) {
+                ArtifactFile artifactFile=parser.getArtifactFile();
+                if (artifactFile==null)
+                    continue;
+                File file=new File(artifactFile.getArtifactFileName());
+                if (!file.exists())
+                    continue;
+                boolean trace_deletion=true;
+                if (!listOnly)
+                    trace_deletion=file.delete();
+                if (trace_deletion) {
+                    addTraceEvent(new DeletedArtifactFile(file.toString(),listOnly));
+                    total_deleted++;
+                }
+            }
+
+
+        }
+        addTraceEvent(new AllArtifactsDeleted(total_deleted,listOnly));
+    }
+
 
 
     private SchemaGraph generateGraph() {
@@ -314,7 +345,7 @@ public class SchemaGraphParser {
         _rootSourceFolders=normalizedSourceFolders;
         if (normalizedSourceFolders.size()==0)
             throw new IllegalArgumentException("No sources folder provided. Must specify at least one sources folder.");
-        addTraceEvent(new ValidatedSourceFolders(normalizedSourceFolders.size()));
+        addTraceEvent(new AllSourceFoldersValidated(normalizedSourceFolders.size()));
         for (ITemplateFileQuery templateQuery : _templateQueries) {
             addTraceEvent(new ExecutingTemplateQuery(templateQuery));
             for (String file : templateQuery.getTemplateFiles()) {
@@ -323,7 +354,7 @@ public class SchemaGraphParser {
                 addTraceEvent(new QueryTemplateFileMatch(file,isDuplicate));
             }
         }
-        addTraceEvent(new ExecutedTemplateQueries(_templatesByFilePath.size()));
+        addTraceEvent(new AllTemplateQueriesExecuted(_templatesByFilePath.size()));
     }
 
     private void addTraceEvent(ITraceEvent event) {

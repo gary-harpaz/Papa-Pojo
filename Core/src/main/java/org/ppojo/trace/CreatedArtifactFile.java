@@ -19,16 +19,12 @@ package org.ppojo.trace;
 /**
  * Created by GARY on 10/8/2015.
  */
-public class CreatedArtifactFile implements ITraceEvent {
-    public  CreatedArtifactFile(String path) {
-        _path=path;
+public class CreatedArtifactFile extends FileTraceEventBase {
+
+    public CreatedArtifactFile(String path) {
+        super(path);
     }
 
-    public String getPath() {
-        return _path;
-    }
-
-    private final String _path;
     @Override
     public String toLogMessage() {
         return "Artifact file created "+_path;

@@ -19,20 +19,14 @@ package org.ppojo.trace;
 /**
  * Created by GARY on 10/8/2015.
  */
-public class QueryTemplateFileMatch implements ITraceEvent {
-    public String getTemplateFilePath() {
-        return _templateFilePath;
-    }
-
-    private final String _templateFilePath;
-
+public class QueryTemplateFileMatch extends FileTraceEventBase {
     public boolean isDuplicate() {
         return _isDuplicate;
     }
 
     private final boolean _isDuplicate;
     public QueryTemplateFileMatch(String filePath,boolean isDuplicate) {
-        _templateFilePath=filePath;
+        super(filePath);
         _isDuplicate=isDuplicate;
     }
 
@@ -41,6 +35,6 @@ public class QueryTemplateFileMatch implements ITraceEvent {
         String prefix="New template file match ";
         if (_isDuplicate)
             prefix="Duplicate template file match ";
-        return prefix+_templateFilePath;
+        return prefix+_path;
     }
 }

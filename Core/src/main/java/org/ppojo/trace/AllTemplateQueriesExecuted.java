@@ -19,19 +19,14 @@ package org.ppojo.trace;
 /**
  * Created by GARY on 10/8/2015.
  */
-public class ValidatedSourceFolders  implements ITraceEvent {
-    public int getNumFolders() {
-        return _numFolders;
-    }
+public class AllTemplateQueriesExecuted extends TotalTraceEventBase {
 
-    private final int _numFolders;
-    public ValidatedSourceFolders(int numFolders) {
-        _numFolders=numFolders;
-
+    public AllTemplateQueriesExecuted(int total) {
+        super(total);
     }
 
     @Override
     public String toLogMessage() {
-        return "Completed validating source folders. Found "+_numFolders+" folders.";
+        return "Executed template queries matched "+_total+" total templates.";
     }
 }

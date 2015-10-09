@@ -40,7 +40,9 @@ public class OptionsProvider {
                 .hasArg()
                 .desc("Path to template file for generating source files. File path can be a relative path and multiple template options can be specified.")
                 .build();
-        Option list=new Option(OptionNames.LIST,"lists all template files matched but don't process them");
+        Option list=new Option(OptionNames.LIST,"Lists all template files matched but don't process them");
+        Option clean=new Option(OptionNames.CLEAN,"Deletes all artifact files defined in matched templates");
+
         Option search=Option.builder(OptionNames.SEARCH).numberOfArgs(2).argName("r|nr folder[" + File.separator + "pattern]")
                 .desc("Searches a folder for  template files. The first argument determines whether the search is recursive (r) or non recursive (nr)." +
                         " The second argument is a path to the folder optionally ending with a pattern for matching template files. When omitted a default pattern value of " + FolderTemplateFileQuery.getDefaultFileFilter() + " is used." +
@@ -54,6 +56,7 @@ public class OptionsProvider {
         options.addOption(template);
         options.addOption(list);
         options.addOption(search);
+        options.addOption(clean);
 
         _options=options;
         return options;

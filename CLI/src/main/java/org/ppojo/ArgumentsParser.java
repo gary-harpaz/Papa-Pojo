@@ -41,10 +41,14 @@ public class ArgumentsParser {
         if (!line.hasOption(OptionNames.SOURCES))
             throw new ParseException("Missing required option sources");
         SchemaGraphParser schemaGraphParser = getSchemaGraphParser(loggingService, line);
-        if (!line.hasOption(OptionNames.LIST))
-            return ()->schemaGraphParser.generateArtifacts();
+        boolean listOption=line.hasOption(OptionNames.LIST);
+        if (!line.hasOption(OptionNames.CLEAN))
+            if (!listOption)
+                return ()->schemaGraphParser.generateArtifacts();
+            else
+                return ()->schemaGraphParser.listMatchedTemplates();
         else
-            return ()->schemaGraphParser.listMatchedTemplates();
+            return ()->schemaGraphParser.cleanArtifacts(listOption);
     }
 
     public static SchemaGraphParser getSchemaGraphParser(ILoggingService loggingService, CommandLine line) throws ParseException {

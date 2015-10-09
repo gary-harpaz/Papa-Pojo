@@ -19,10 +19,10 @@ package org.ppojo.trace;
 /**
  * Created by GARY on 10/7/2015.
  */
-public class ValidatedSourceFolderPath implements ITraceEvent {
-    private final String _path;
+public class ValidatedSourceFolderPath extends FileTraceEventBase {
+
     public ValidatedSourceFolderPath(String path) {
-        _path=path;
+        super(path);
     }
 
     public String getPath() {

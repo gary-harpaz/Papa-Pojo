@@ -17,16 +17,22 @@
 package org.ppojo.trace;
 
 /**
- * Created by GARY on 10/8/2015.
+ * Created by GARY on 10/9/2015.
  */
-public class ExecutedTemplateQueries implements ITraceEvent {
-    private int _totalTemplateFilesMatched;
-    public ExecutedTemplateQueries(int totalTemplateFilesMatched) {
-        _totalTemplateFilesMatched=totalTemplateFilesMatched;
+public class DeletedArtifactFile extends FileTraceEventBase {
+
+    public DeletedArtifactFile(String path,boolean listOnly) {
+        super(path);
+        _listOnly=listOnly;
     }
+
+    private final boolean _listOnly;
 
     @Override
     public String toLogMessage() {
-        return "Executed template queries matched "+_totalTemplateFilesMatched+" total templates.";
+        if (!_listOnly)
+            return "Deleted artifact file "+_path;
+        else
+            return "Matched artifact file "+_path+" for deletion";
     }
 }
