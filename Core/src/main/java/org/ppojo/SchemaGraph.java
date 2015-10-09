@@ -17,6 +17,7 @@
 package org.ppojo;
 
 import org.ppojo.data.ArtifactData;
+import org.ppojo.data.ArtifactMetaData;
 import org.ppojo.data.ClassArtifactData;
 import org.ppojo.data.TemplateFileData;
 import org.ppojo.trace.AllArtifactsCreated;
@@ -24,6 +25,7 @@ import org.ppojo.trace.CreatedArtifactFile;
 import org.ppojo.trace.ILoggingService;
 import org.ppojo.trace.ITraceEvent;
 import org.ppojo.utils.Helpers;
+import org.ppojo.utils.MapChainValue;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -39,18 +41,38 @@ import java.util.*;
 public class SchemaGraph {
     private final Iterable<ArtifactFile> _artifactFiles;
     private final ILoggingService _loggingService;
+    private final ArrayList<ArtifactBase> _debugOptionsArtifacts=new ArrayList<>();
     public SchemaGraph(Iterable<ArtifactFile> artifactFiles,ILoggingService loggingService) {
         _artifactFiles=artifactFiles;
         _loggingService=loggingService;
     }
 
     public void produceArtifactFiles() {
+        _debugOptionsArtifacts.clear();
         int index=0;
         for (ArtifactFile artifactFile : _artifactFiles) {
             produceArtifactFiles(artifactFile);
             index++;
         }
         addTraceEvent(new AllArtifactsCreated(index));
+        logDebugOptions();
+    }
+
+    private void logDebugOptions() {
+        for (ArtifactBase debugOptionsArtifact : _debugOptionsArtifacts) {
+            logDebugOptions(debugOptionsArtifact);
+        }
+    }
+
+    private void logDebugOptions(ArtifactBase debugOptionsArtifact) {
+        appendLineToLog("Options applied to artifact "+debugOptionsArtifact.getName()+" in "+debugOptionsArtifact.getArtifactFileName());
+        ArtifactMetaData artifactMetaData=ArtifactMetaData.getArtifactMetaData(debugOptionsArtifact.getType());
+        artifactMetaData.getSupportedOptions().forEach(f->{
+            MapChainValue mapChainValue=debugOptionsArtifact.getOptions().get(f.toString());
+            if (mapChainValue!=null) {
+                appendLineToLog(f.toString()+" : "+ f.FormatValue(mapChainValue.getValue())+" : "+mapChainValue.getValueSourceName());
+            }
+        });
     }
 
     private void produceArtifactFiles(ArtifactFile artifactFile) {
@@ -103,6 +125,8 @@ public class SchemaGraph {
             }
             writeArtifactContent(artifactBase,bufferedWriter);
             index++;
+            if (artifactBase.getOptions().isDebugFlag())
+                _debugOptionsArtifacts.add(artifactBase);
         }
         bufferedWriter.flush();
     }
@@ -114,6 +138,8 @@ public class SchemaGraph {
         if (artifactBase.getNestedArtifacts()!=null) {
             for (ArtifactBase nestedArtifactBase : artifactBase.getNestedArtifacts()) {
                 writeArtifactContent(artifactBase,bufferedWriter);
+                if (nestedArtifactBase.getOptions().isDebugFlag())
+                    _debugOptionsArtifacts.add(nestedArtifactBase);
             }
         }
         bufferedWriter.write(String.format("%n}%n"));

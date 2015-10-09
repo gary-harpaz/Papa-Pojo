@@ -62,7 +62,7 @@ public class ArtifactParser {
             _artifactTargetFile=artifactFolder.resolve(_rawData.nestInArtifact +".java").normalize().toString();
             _artifactKey=_artifactTargetFile+"@"+_rawData.nestInArtifact +"."+_rawData.name;
         }
-        _options=new ArtifactOptions("Artifact "+_rawData.name,_rawData.options,_parentTemplate.getOptions());
+        _options=new ArtifactOptions("Artifact "+_rawData.name,_rawData.options,_parentTemplate.getOptions(),_rawData.debugOptions);
         _artifactType=ArtifactTypes.Parse(_rawData.type);
         if (_artifactType==ArtifactTypes.FluentBuilder)
             newTask(ResolveIssueTypes.FluentBuild);

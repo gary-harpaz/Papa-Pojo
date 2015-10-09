@@ -17,10 +17,7 @@
 package org.ppojo;
 
 import org.ppojo.data.CopyStyleData;
-import org.ppojo.utils.EmptyArray;
-import org.ppojo.utils.EnumParser;
-import org.ppojo.utils.MapChain;
-import org.ppojo.utils.MapChainValue;
+import org.ppojo.utils.*;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
@@ -57,7 +54,11 @@ public class ArtifactOptions extends MapChain {
         _defaultOptions=new ArtifactOptions("Default",defaultProperties,null);
     }
     public ArtifactOptions(String name,@Nullable Map<String,Object> localProperties, @Nullable ArtifactOptions parent) {
+        this(name,localProperties,parent,false);
+    }
+    public ArtifactOptions(String name,@Nullable Map<String,Object> localProperties, @Nullable ArtifactOptions parent,boolean debugFlag) {
         super(name,localProperties, parent);
+        _debugFlag=debugFlag;
         if (parent==null) {
             if (localProperties==null)
                 throw new NullPointerException("All default options must have values");
@@ -77,8 +78,10 @@ public class ArtifactOptions extends MapChain {
         }
 
     }
-
-
+    private final boolean _debugFlag;
+    public boolean isDebugFlag() {
+        return _debugFlag;
+    }
 
     private static ArtifactOptions _defaultOptions;
     public static @Nonnull ArtifactOptions getDefaultOptions() {
@@ -194,14 +197,16 @@ public class ArtifactOptions extends MapChain {
 
         Fields(Class optionType) {
             _optionType =optionType;
-            if (_optionType==null || _optionType.isPrimitive() || _optionType.isEnum() || _optionType==String.class
-                    || _optionType==CopyStyleData[].class) //TODO define formatter for this
+            if (_optionType==null || _optionType.isPrimitive() || _optionType.isEnum() || _optionType==String.class)
                 _valueFormatter=Fields::DefaultFormatter;
             else
                 if (_optionType==String[].class)
                     _valueFormatter=Fields::StringArrayFormatter;
                 else
-                    throw new RuntimeException("Unsupported formatter in "+this.toString()+" for "+_optionType.toString());
+                    if (_optionType==CopyStyleData[].class)
+                        _valueFormatter=Fields::copyStylesFormatter;
+                    else
+                        throw new RuntimeException("Unsupported formatter in "+this.toString()+" for "+_optionType.toString());
         }
 
         private final Function<Object,String> _valueFormatter;
@@ -231,6 +236,26 @@ public class ArtifactOptions extends MapChain {
                 if (i > 0)
                     stringBuilder.append(", ");
                 stringBuilder.append(array[i]);
+            }
+            stringBuilder.append(" ]");
+            return stringBuilder.toString();
+        }
+
+        private static String copyStylesFormatter(Object value) {
+            if (value == null)
+                return "null";
+            if (!(value instanceof  CopyStyleData[]))
+                return value.toString();
+            CopyStyleData[] copyStylesArray=(CopyStyleData[])value;
+            StringBuilder stringBuilder=new StringBuilder();
+            stringBuilder.append("[ ");
+            for (CopyStyleData copyStyleData : copyStylesArray) {
+                stringBuilder.append("{ style : ").append(copyStyleData.style.toString());
+                if (!Helpers.IsNullOrEmpty(copyStyleData.methodName)) {
+                    stringBuilder.append(", methodName : ").append(copyStyleData.methodName);
+                }
+                stringBuilder.append(" }");
+
             }
             stringBuilder.append(" ]");
             return stringBuilder.toString();

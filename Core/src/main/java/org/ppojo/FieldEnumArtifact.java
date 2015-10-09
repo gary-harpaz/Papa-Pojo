@@ -62,5 +62,4 @@ public class FieldEnumArtifact extends ArtifactBase {
         }
         bufferedWriter.append(System.lineSeparator());
     }
-
 }

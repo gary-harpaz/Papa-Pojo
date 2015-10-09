@@ -28,6 +28,7 @@ public abstract class ArtifactData {
     public String name;
     public String path;
     public String nestInArtifact;
+    public boolean debugOptions;
     public transient Map<String,Object> options;
 
 

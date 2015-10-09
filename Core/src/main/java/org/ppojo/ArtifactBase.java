@@ -169,4 +169,12 @@ public abstract class ArtifactBase implements IArtifactParent {
     public @Nonnull String[] getMoreImports() {
         return EmptyArray.get(String.class);
     }
+
+    @Override
+    public String getArtifactFileName() {
+        ArtifactFile artifactFile=as(ArtifactFile.class,_artifactParent);
+        if (artifactFile!=null)
+            return artifactFile.getArtifactFileName();
+        return _artifactParent.getArtifactFileName();
+    }
 }

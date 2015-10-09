@@ -21,6 +21,6 @@ package org.ppojo;
  */
 public interface IArtifactParent {
     ArtifactOptions getOptions();
-
+    String getArtifactFileName();
     void addChildArtifact(ArtifactBase artifactBase);
 }
