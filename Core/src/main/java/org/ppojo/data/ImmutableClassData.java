@@ -16,9 +16,17 @@
 
 package org.ppojo.data;
 
+import org.ppojo.*;
+
 /**
- * Created by GARY on 10/1/2015.
+ * Represents a deserialized {@link ArtifactTypes#ImmutableClass} artifact.
+ * @see ImmutableClassArtifact
+ * @see ArtifactTypes#ImmutableClass
  */
 public class ImmutableClassData extends ClassArtifactData {
+    /**
+     * The class name used for the data field, or data behind the immutable instance.
+     * This should correspond to an {@link ArtifactTypes#Pojo} artifact name.
+     */
     public String dataArtifact;
 }

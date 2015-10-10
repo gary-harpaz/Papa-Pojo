@@ -74,11 +74,11 @@ public class ArtifactConstructionTest {
         cleanupPreviousArtifacts();
         String baseSourceFolder= getResourcePath(SchemaTestResources.MainSourcesFolder).toString();
         FolderTemplateFileQuery query=new FolderTemplateFileQuery(baseSourceFolder);
-        SchemaGraphParser schemaGraphParser=new SchemaGraphParser(
+        parsingService parsingService =new parsingService(
                 ArrayListBuilder.newArrayList(baseSourceFolder).create(),
                 ArrayListBuilder.<ITemplateFileQuery>newArrayList(query).create(),
                 _defaultOptions,loggingService);
-        schemaGraphParser.generateArtifacts();
+        parsingService.generateArtifacts();
 
         assetMainArtifactFile("sampleSimplePojo\\Person.java");
         assetMainArtifactFile("sampleNamingOptions\\Person1.java");

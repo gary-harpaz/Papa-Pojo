@@ -20,7 +20,6 @@ import com.google.gson.*;
 import org.ppojo.exceptions.EnumParseException;
 import org.ppojo.CopyStyleTypes;
 import org.ppojo.utils.EmptyArray;
-
 import java.lang.reflect.Type;
 import java.util.HashSet;
 import java.util.Map;
@@ -29,7 +28,12 @@ import java.util.Set;
 import static org.ppojo.utils.Helpers.EmptyIfNull;
 
 /**
- * Created by GARY on 10/3/2015.
+ * Responsible for deserializing an array of copy styles JSON elements to array of {@link CopyStyleData}.
+ * @see CopyStyleTypes
+ * @see CopyStyleData
+ * @see Serializer
+ * @see ArtifactSerializer
+ * @see TemplateSerializer
  */
 public class CopyStyleDataSerializer  implements JsonDeserializer<CopyStyleData[]> {
 

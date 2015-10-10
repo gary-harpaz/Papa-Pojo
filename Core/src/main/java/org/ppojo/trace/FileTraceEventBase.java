@@ -16,9 +16,6 @@
 
 package org.ppojo.trace;
 
-/**
- * Created by GARY on 10/9/2015.
- */
 public abstract class FileTraceEventBase implements ITraceEvent {
     protected final String _path;
     protected  FileTraceEventBase(String path) {

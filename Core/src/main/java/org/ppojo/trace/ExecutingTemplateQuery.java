@@ -19,9 +19,6 @@ package org.ppojo.trace;
 import org.ppojo.FolderTemplateFileQuery;
 import org.ppojo.ITemplateFileQuery;
 
-/**
- * Created by GARY on 10/8/2015.
- */
 public class ExecutingTemplateQuery implements ITraceEvent {
     private final ITemplateFileQuery _query;
     public ExecutingTemplateQuery(ITemplateFileQuery query) {

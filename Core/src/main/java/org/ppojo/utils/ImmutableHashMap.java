@@ -20,9 +20,6 @@ import javax.annotation.Nonnull;
 import java.util.Iterator;
 import java.util.Map;
 
-/**
- * Created by GARY on 10/2/2015.
- */
 public class ImmutableHashMap<K,V> implements ImmutableMap<K,V> {
 
     private Map<K,V> _values;

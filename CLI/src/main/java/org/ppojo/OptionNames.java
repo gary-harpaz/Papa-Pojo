@@ -17,7 +17,7 @@
 package org.ppojo;
 
 /**
- * Created by GARY on 10/6/2015.
+ * Constant String members for option names.
  */
 public class OptionNames {
     public static final String HELP="help";

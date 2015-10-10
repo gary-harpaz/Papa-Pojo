@@ -17,7 +17,8 @@
 package org.ppojo.utils;
 
 /**
- * Created by GARY on 9/25/2015.
+ * Represents a validation error which occurred during artifact generation.
+ * @see ValidationResult
  */
 public class ValidationError {
     private final String _message;

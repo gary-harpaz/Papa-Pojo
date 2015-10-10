@@ -17,7 +17,7 @@
 package org.ppojo;
 
 /**
- * Created by GARY on 9/23/2015.
+ * Represents a field defined in a {@link Schema} object.
  */
 public class SchemaField {
 

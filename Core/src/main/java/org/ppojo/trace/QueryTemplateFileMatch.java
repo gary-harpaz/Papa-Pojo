@@ -16,9 +16,6 @@
 
 package org.ppojo.trace;
 
-/**
- * Created by GARY on 10/8/2015.
- */
 public class QueryTemplateFileMatch extends FileTraceEventBase {
     public boolean isDuplicate() {
         return _isDuplicate;

@@ -2,6 +2,8 @@
   <dictionary name="GARY">
     <words>
       <w>datas</w>
+      <w>deserialized</w>
+      <w>deserializing</w>
       <w>gson</w>
       <w>harpaz</w>
       <w>pojo</w>

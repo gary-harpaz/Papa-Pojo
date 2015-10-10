@@ -17,7 +17,7 @@
 package org.ppojo;
 
 /**
- * Created by GARY on 9/24/2015.
+ * Interface for abstracting queries invoked by {@link parsingService} to match template files, in the beginning of the generetaion process.
  */
 public interface ITemplateFileQuery {
     Iterable<String> getTemplateFiles();

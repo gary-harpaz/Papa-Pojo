@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 
 /**
- * Created by GARY on 10/6/2015.
+ * Formats the help message for command line options created by {@link OptionsProvider}
  */
 public class HelpPrinter {
     public static void print(Options options) {

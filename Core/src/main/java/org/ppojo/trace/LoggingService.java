@@ -24,7 +24,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by GARY on 10/7/2015.
+ * Implements logging during artifact generation using a StringBuilder
+ * @see ILoggingService
  */
 public class LoggingService implements ILoggingService {
 

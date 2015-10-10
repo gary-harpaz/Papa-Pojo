@@ -16,9 +16,6 @@
 
 package org.ppojo.exceptions;
 
-/**
- * Created by GARY on 10/8/2015.
- */
 public class FileNotFound extends RuntimeException {
     public FileNotFound(String message) {
         super(message);

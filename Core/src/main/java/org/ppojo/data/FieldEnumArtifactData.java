@@ -16,8 +16,12 @@
 
 package org.ppojo.data;
 
+import org.ppojo.*;
+
 /**
- * Created by GARY on 9/28/2015.
+ * Represents a deserialized {@link ArtifactTypes#FieldEnum} artifact.
+ * @see FieldEnumArtifact
+ * @see ArtifactTypes#FieldEnum
  */
 public class FieldEnumArtifactData extends ArtifactData {
 }

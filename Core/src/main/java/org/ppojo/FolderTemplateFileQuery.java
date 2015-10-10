@@ -32,7 +32,8 @@ import static org.ppojo.utils.Helpers.IsNullOrEmpty;
 
 
 /**
- * Created by GARY on 9/24/2015.
+ * Implements a query for matching template files in an input folder using a pattern that can contain wildcards. The query can
+ * optionaly be recursive or non recursive.
  */
 public class FolderTemplateFileQuery implements ITemplateFileQuery {
     public String getPath() {

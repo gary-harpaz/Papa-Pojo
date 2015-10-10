@@ -19,7 +19,8 @@ package org.ppojo;
 import org.ppojo.utils.EnumParser;
 
 /**
- * Created by GARY on 9/23/2015.
+ * Option which affects the various capitalization styles applied to artifact members. By selecting different {@link CapitalizationTypes}
+ * you can choose the style in accordance with your preferred naming convention.
  */
 public enum CapitalizationTypes {
     None,

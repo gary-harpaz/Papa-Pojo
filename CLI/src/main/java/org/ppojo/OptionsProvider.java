@@ -22,7 +22,7 @@ import org.apache.commons.cli.Options;
 import java.io.File;
 
 /**
- * Created by GARY on 10/6/2015.
+ * Creates command line options for using papa pojo.
  */
 public class OptionsProvider {
 

@@ -19,11 +19,12 @@ package org.ppojo;
 import javax.annotation.Nonnull;
 import java.io.BufferedWriter;
 import java.io.IOException;
-
+import org.ppojo.data.*;
 import static org.ppojo.utils.Helpers.EmptyIfNull;
 
 /**
- * Created by GARY on 10/5/2015.
+ * Represents a resolved {@link ArtifactTypes#FluentBuilder} artifact.
+ * @see FluentBuilderData
  */
 public class FluentBuilderArtifact extends ClassArtifactBase {
     protected FluentBuilderArtifact(@Nonnull IArtifactParent artifactParent, ArtifactParser artifactParser, String extendsClass, String[] implementsInterfaces

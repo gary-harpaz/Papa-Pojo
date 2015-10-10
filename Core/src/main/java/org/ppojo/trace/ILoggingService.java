@@ -17,12 +17,11 @@
 package org.ppojo.trace;
 
 /**
- * Created by GARY on 10/7/2015.
+ * Interface for implementing logging of events occurring during artifact generation.
+ * @see LoggingService
  */
 public interface ILoggingService  {
     void appendLine(String message);
-
     String getLog();
-
     void addTraceEvent(ITraceEvent event);
 }

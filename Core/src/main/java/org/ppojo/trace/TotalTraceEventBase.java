@@ -16,9 +16,6 @@
 
 package org.ppojo.trace;
 
-/**
- * Created by GARY on 10/9/2015.
- */
 public abstract class TotalTraceEventBase implements ITraceEvent {
     protected final int _total;
     public TotalTraceEventBase(int total) {

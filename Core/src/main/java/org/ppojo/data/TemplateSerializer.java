@@ -26,7 +26,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by GARY on 9/23/2015.
+ * Responsible for deserializing and validating the JSON element specified in the papa pojo template file to corresponding {@link TemplateFileData}
+ * @see Serializer
+ * @see ArtifactSerializer
+ * @see CopyStyleDataSerializer
  */
 public class TemplateSerializer  implements JsonDeserializer<TemplateFileData> {
 

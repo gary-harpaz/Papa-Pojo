@@ -28,7 +28,7 @@ import java.util.Scanner;
 import java.util.function.Function;
 
 /**
- * Created by GARY on 9/23/2015.
+ * Utils and helper methods.
  */
 public class Helpers {
 

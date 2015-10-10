@@ -18,9 +18,13 @@ package org.ppojo.utils;
 
 
 import javax.annotation.*;
+import org.ppojo.*;
 
 /**
- * Created by GARY on 9/23/2015.
+ * Represents an option value in the artifact option tree.
+ * @see MapChain
+ * @see ArtifactOptions
+ * @see ArtifactOptions.Fields
  */
 public class MapChainValue {
     private final Object _value;

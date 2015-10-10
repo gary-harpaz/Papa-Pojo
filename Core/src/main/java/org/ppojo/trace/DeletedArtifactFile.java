@@ -16,9 +16,6 @@
 
 package org.ppojo.trace;
 
-/**
- * Created by GARY on 10/9/2015.
- */
 public class DeletedArtifactFile extends FileTraceEventBase {
 
     public DeletedArtifactFile(String path,boolean listOnly) {

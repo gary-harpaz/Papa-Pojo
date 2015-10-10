@@ -17,13 +17,14 @@
 package org.ppojo;
 
 import org.ppojo.utils.Helpers;
-
+import org.ppojo.data.*;
 import javax.annotation.Nonnull;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
 /**
- * Created by GARY on 9/28/2015.
+ * Represents a resolved {@link ArtifactTypes#FieldEnum} artifact.
+ * @see FieldEnumArtifactData
  */
 public class FieldEnumArtifact extends ArtifactBase {
     public FieldEnumArtifact(@Nonnull IArtifactParent artifactParent,@Nonnull ArtifactParser artifactParser) {

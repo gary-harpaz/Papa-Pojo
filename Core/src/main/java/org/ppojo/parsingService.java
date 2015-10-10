@@ -25,6 +25,7 @@ import org.ppojo.trace.*;
 import org.ppojo.utils.Helpers;
 import org.ppojo.utils.ValidationResult;
 
+import javax.annotation.Nonnull;
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -32,18 +33,35 @@ import java.time.ZonedDateTime;
 import java.util.*;
 
 /**
- * Created by GARY on 9/25/2015.
+ * This is the root entry point class for operating on a set of multiple template files, options and schemas.
+ * It kicks off three possible commands : {@link parsingService#generateArtifacts()}, {@link parsingService#cleanArtifacts(boolean)}
+ * {@link parsingService#listMatchedTemplates()}. The core module exposes the ability to invoke the commands using this class.
+ * This is used by the CLI module to parse various user parameters and invoke the appropriate command.
  */
-public class SchemaGraphParser {
+public class parsingService {
 
-    public SchemaGraphParser(Iterable<String> rootSourceFolders, Iterable<ITemplateFileQuery> templateQueries,ArtifactOptions defaultOptions
-    ,ILoggingService loggingService) {
+
+    /**
+     * @param rootSourceFolders An iterable Strings object of source file folders. This parameter is required. When generating artifacts a root
+     *                          source folder must be a parent of the artifact file. With this information it is possible to calculate the package
+     *                          of the artifact.
+     * @param templateQueries   An iterable ITemplateFileQuery object of queries. The service will iterate the queries and invoke each one. The resulting files
+     *                          of all query results will compose the list of template files to be evaluated by the parser.
+     * @param defaultOptions    The base options to apply for artifacts. These are the top level options for all artifacts and should provide all default values for
+     *                          options in case they are not present.
+     * @param loggingService    A dependency which will be used throughout the process. Provides sub process a service to log their output to.
+     *                          When invoking papa pojo from CLI module the log file is written to the standard output.
+     */
+    public parsingService(@Nonnull Iterable<String> rootSourceFolders,@Nonnull Iterable<ITemplateFileQuery> templateQueries,
+                          @Nonnull ArtifactOptions defaultOptions ,@Nonnull ILoggingService loggingService) {
         if (rootSourceFolders==null)
             throw new NullPointerException("rootSourceFolder");
         if (templateQueries==null)
             throw new NullPointerException("templateQueries");
         if (defaultOptions==null)
             throw new NullPointerException("defaultOptions");
+        if (loggingService==null)
+            throw new NullPointerException("loggingService");
         _templatesByFilePath=new HashMap<>();
         _allArtifactsByArtifactKey =new HashMap<>();
         _rootSourceFolders=rootSourceFolders;
@@ -86,11 +104,13 @@ public class SchemaGraphParser {
     }
 
 
-
-
+    /**
+     * Kicks off the evaluation process: querying for templates, parsing the files, validating the input, resolving the object model and
+     * generating all artifacts.
+     */
     public void generateArtifacts() {
         ZonedDateTime zonedDateTime = ZonedDateTime.now();
-        appendLineToLog(zonedDateTime.toLocalDate().toString()+" SchemaGraphParser.generateArtifacts");
+        appendLineToLog(zonedDateTime.toLocalDate().toString()+" parsingService.generateArtifacts");
         validateAndResolveInputParams();
         deserializeTemplateFiles();
         ValidationResult validationResult=new ValidationResult(_throwFirstErrorException);
@@ -101,22 +121,30 @@ public class SchemaGraphParser {
         }
         if (!validationResult.hasErrors()) {
             _allParsersValid=true;
-            SchemaGraph schemaGraph=generateGraph();
-            schemaGraph.produceArtifactFiles();
+            ArtifactGraph artifactGraph =generateGraph();
+            artifactGraph.produceArtifactFiles();
         }
         else
             _allParsersValid=false;
     }
 
+    /**
+     * Can be used to try out input parameters in a "safe" way. The command will query for template file and list the matching files but
+     * will not evaluate the further.
+     */
     public void listMatchedTemplates() {
         ZonedDateTime zonedDateTime = ZonedDateTime.now();
-        appendLineToLog(zonedDateTime.toLocalDate().toString()+" SchemaGraphParser.listMatchedTemplates");
+        appendLineToLog(zonedDateTime.toLocalDate().toString()+" parsingService.listMatchedTemplates");
         validateAndResolveInputParams();
     }
 
+    /**
+     * Can be used to clean (delete) all artifact files specified in the matched templates.
+     * @param listOnly If true the matched artifact files will be logged but not actually deleted.
+     */
     public void cleanArtifacts(boolean listOnly) {
         ZonedDateTime zonedDateTime = ZonedDateTime.now();
-        appendLineToLog(zonedDateTime.toLocalDate().toString()+" SchemaGraphParser.cleanArtifacts");
+        appendLineToLog(zonedDateTime.toLocalDate().toString()+" parsingService.cleanArtifacts");
         validateAndResolveInputParams();
         deserializeTemplateFiles();
         ValidationResult validationResult=new ValidationResult(_throwFirstErrorException);
@@ -147,11 +175,11 @@ public class SchemaGraphParser {
 
 
 
-    private SchemaGraph generateGraph() {
+    private ArtifactGraph generateGraph() {
         assertAllValid();
         List<ArtifactFile> artifactFiles=new ArrayList<>();
         generateGraphRecursive(artifactFiles,_allArtifactsByArtifactKey.values());
-        return new SchemaGraph(artifactFiles,_loggingService);
+        return new ArtifactGraph(artifactFiles,_loggingService);
 
     }
     private void generateGraphRecursive(List<ArtifactFile> artifactFiles,Iterable<ArtifactParser> artifactParsers) {
@@ -241,17 +269,6 @@ public class SchemaGraphParser {
         }
     }
 
-
-/*
-    private void deserializeTemplateFiles() {
-        Serializer serializer=new Serializer();
-        for (String file : _templatesByFilePath.keySet()) {
-            String json= Helpers.readTextFile(file);
-            TemplateFileData rawData=serializer.deserialize(json,file);
-            _templatesByFilePath.put(file,new TemplateFileParser(file,rawData,_defaultOptions));
-        }
-    }
-    */
     private void deserializeTemplateFiles() {
         Serializer serializer=new Serializer();
 

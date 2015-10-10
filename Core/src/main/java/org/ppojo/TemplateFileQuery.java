@@ -24,7 +24,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * Created by GARY on 10/8/2015.
+ * Implements a query which always results in a single file result, if the file exists.
  */
 public class TemplateFileQuery implements ITemplateFileQuery {
     public TemplateFileQuery(String path,boolean isValidated) {

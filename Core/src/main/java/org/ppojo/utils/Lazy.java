@@ -18,9 +18,6 @@ package org.ppojo.utils;
 
 import java.util.function.Supplier;
 
-/**
- * Created by GARY on 10/2/2015.
- */
 public class Lazy<T> implements Supplier<T> {
 
     private Supplier<T> _getter;

@@ -16,9 +16,6 @@
 
 package org.ppojo.trace;
 
-/**
- * Created by GARY on 10/7/2015.
- */
 public interface ITraceEvent {
     String toLogMessage();
 }

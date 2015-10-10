@@ -16,9 +16,6 @@
 
 package org.ppojo.exceptions;
 
-/**
- * Created by GARY on 10/8/2015.
- */
 public class DuplicateOptionsFileInFolder extends RuntimeException{
     public DuplicateOptionsFileInFolder(String message) {
         super(message);

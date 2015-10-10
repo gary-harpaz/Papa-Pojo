@@ -21,18 +21,21 @@ import org.ppojo.utils.EmptyArray;
 import org.ppojo.utils.MapChainValue;
 
 import javax.annotation.Nonnull;
-import java.io.BufferedWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.ppojo.utils.Helpers.IsNullOrEmpty;
-import static org.ppojo.utils.Helpers.as;
-import static org.ppojo.utils.Helpers.removeFilenameExtension;
+import static org.ppojo.utils.Helpers.*;
 
 /**
- * Created by GARY on 9/23/2015.
+ * Base class for representing an artifact after being parsed ,validated and resolved. Once fully resolved an
+ * artifact will contain a schema, options and linked to its parent entity, usually the {@link ArtifactFile} in which it will be generated.
+ * The abstract methods in this class define the base interface methods required to write artifact code output to an input StreamWriter,
+ * thus derived classes corresponding to various artifact types can implement their specific logic for the output.
+ * @see ArtifactParser
+ * @see ArtifactBase
+ * @see ArtifactFile
  */
 public abstract class ArtifactBase implements IArtifactParent {
     public abstract ArtifactTypes getType();

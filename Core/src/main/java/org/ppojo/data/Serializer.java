@@ -27,7 +27,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by GARY on 9/30/2015.
+ * Root class for deserializing papa-pojo JSON template files.
+ * @see TemplateSerializer
+ * @see ArtifactSerializer
+ * @see CopyStyleDataSerializer
  */
 public class Serializer {
 
@@ -115,20 +118,20 @@ public class Serializer {
     }
 
 
-    private String _desrializedFilePath;
+    private String _deserializedFilePath;
 
     public TemplateFileData deserialize(String json,String filePath) {
         try {
-            _desrializedFilePath=filePath;
+            _deserializedFilePath =filePath;
             return _gsonCustomized.fromJson(json,TemplateFileData.class);
         }
         finally {
-            _desrializedFilePath=null;
+            _deserializedFilePath =null;
         }
     }
 
 
     public String getDeserializeFilePath() {
-        return _desrializedFilePath;
+        return _deserializedFilePath;
     }
 }

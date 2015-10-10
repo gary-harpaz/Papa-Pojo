@@ -33,7 +33,8 @@ import java.util.function.BiConsumer;
 import static org.ppojo.utils.Helpers.*;
 
 /**
- * Created by GARY on 9/25/2015.
+ * Contains logic for parsing, validating and resolving raw deserialized {@link ArtifactData}.
+ * @see TemplateFileParser
  */
 public class ArtifactParser {
 
@@ -130,15 +131,15 @@ public class ArtifactParser {
     }
     public ArtifactOptions getOptions() { return _options; }
 
-    public boolean validateArtifact(SchemaGraphParser schemaGraphParser, ValidationResult validationResult) {
+    public boolean validateArtifact(parsingService parsingService, ValidationResult validationResult) {
         if (_wasValidationInvoked)
             return !_isValid;
         _wasValidationInvoked=true;
         int initialErrorSize=validationResult.getErrors().size();
-        validateKeyUniqueness(schemaGraphParser, validationResult);
+        validateKeyUniqueness(parsingService, validationResult);
         checkInvalidCharacters(validationResult,this::checkForInvalidCharInName);
         checkInvalidCharacters(validationResult,this::checkForInvalidCharInNestedIn);
-        validateTargetFileInSourceFolder(schemaGraphParser, validationResult);
+        validateTargetFileInSourceFolder(parsingService, validationResult);
         if (validationResult.getErrors().size()==initialErrorSize) {
             resolveArtifactFile();
             _isValid=true;
@@ -160,10 +161,10 @@ public class ArtifactParser {
         _nestedArtifact.add(nestedChildArtifact);
     }
 
-    private void validateKeyUniqueness(SchemaGraphParser schemaGraphParser, ValidationResult validationResult) {
-        ArtifactParser duplicate= schemaGraphParser.getAllArtifacts().get(_artifactKey);
+    private void validateKeyUniqueness(parsingService parsingService, ValidationResult validationResult) {
+        ArtifactParser duplicate= parsingService.getAllArtifacts().get(_artifactKey);
         if (duplicate==null)
-            schemaGraphParser.getAllArtifacts().put(_artifactKey,this);
+            parsingService.getAllArtifacts().put(_artifactKey,this);
         else
             if (duplicate!=this) {
                 if (duplicate.isArtifactNameDeducedFromTemplateFile() || isArtifactNameDeducedFromTemplateFile())
@@ -173,9 +174,9 @@ public class ArtifactParser {
             }
     }
 
-    private void validateTargetFileInSourceFolder(SchemaGraphParser schemaGraphParser, ValidationResult validationResult) {
+    private void validateTargetFileInSourceFolder(parsingService parsingService, ValidationResult validationResult) {
         boolean inSourceFolder=false;
-        for (String sourceFolder : schemaGraphParser.getRootSourceFolders()) {
+        for (String sourceFolder : parsingService.getRootSourceFolders()) {
             if (_artifactTargetFile.startsWith(sourceFolder)) {
                 _parentSourceFolder=sourceFolder;
                 inSourceFolder=true;
@@ -220,18 +221,18 @@ public class ArtifactParser {
         return false;
     }
 
-    public boolean retryResolve(SchemaGraphParser schemaGraphParser, ValidationResult validationResult) {
+    public boolean retryResolve(parsingService parsingService, ValidationResult validationResult) {
         if (getIsResolved())
             return false;
         for (ResolveTask resolveTask : _dependencyResolveIssues.values()) {
-            tryResolve(resolveTask,schemaGraphParser,validationResult);
+            tryResolve(resolveTask, parsingService,validationResult);
             if (resolveTask.hasResolveFailed)
                 return false;
         }
         return !getIsResolved();
     }
 
-    private void tryResolve(ResolveTask resolveTask, SchemaGraphParser schemaGraphParser, ValidationResult validationResult) {
+    private void tryResolve(ResolveTask resolveTask, parsingService parsingService, ValidationResult validationResult) {
         if (resolveTask.hasResolveFailed || resolveTask.dependency!=null)
             return;
         resolveTask.hasResolveFailed=true;

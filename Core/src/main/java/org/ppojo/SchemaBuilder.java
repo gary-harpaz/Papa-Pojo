@@ -18,7 +18,7 @@ package org.ppojo;
 
 import javax.annotation.Nonnull;
 /**
- * Created by GARY on 9/23/2015.
+ * Builder class for creating {@link Schema} objects using a fluent API.
  */
 public class SchemaBuilder {
     private Schema _schema=new Schema();

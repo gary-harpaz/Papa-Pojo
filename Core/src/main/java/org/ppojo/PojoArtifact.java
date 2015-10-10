@@ -16,7 +16,7 @@
 
 package org.ppojo;
 
-import org.ppojo.data.CopyStyleData;
+import org.ppojo.data.*;
 import org.ppojo.utils.EmptyArray;
 
 import javax.annotation.Nonnull;
@@ -25,7 +25,8 @@ import java.io.IOException;
 import java.util.Arrays;
 
 /**
- * Created by GARY on 9/23/2015.
+ * Represents a resolved {@link ArtifactTypes#Pojo} artifact.
+ * @see ClassArtifactData
  */
 public class PojoArtifact extends ClassArtifactBase {
 

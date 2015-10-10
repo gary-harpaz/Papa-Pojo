@@ -21,11 +21,13 @@ import org.ppojo.utils.Helpers;
 import javax.annotation.Nonnull;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import org.ppojo.data.*;
 
 import static org.ppojo.utils.Helpers.EmptyIfNull;
 
 /**
- * Created by GARY on 10/1/2015.
+ * Represents a resolved {@link ArtifactTypes#ImmutableClass} artifact.
+ * @see ImmutableClassData
  */
 public class ImmutableClassArtifact extends ClassArtifactBase {
     protected ImmutableClassArtifact(@Nonnull IArtifactParent artifactParent, @Nonnull ArtifactParser artifactParser,String extendsClass,

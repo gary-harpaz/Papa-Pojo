@@ -20,9 +20,16 @@ package org.ppojo.utils;
 import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
+import org.ppojo.*;
 
 /**
- * Created by GARY on 9/23/2015.
+ * In papa pojo options for configuring artifacts can be defined as a hierarchical tree. Options defined at deeper
+ * (more specific) levels of the tree override their parent definitions. Each instance of the class is a node in this tree.
+ * The class facilitates this structure by flattening the options at a specific tree node while retaining the knowledge of the
+ * options values source in the tree.
+ * @see MapChainValue
+ * @see ArtifactOptions
+ * @see ArtifactOptions.Fields
  */
 public class MapChain {
 

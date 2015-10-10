@@ -16,9 +16,6 @@
 
 package org.ppojo.exceptions;
 
-/**
- * Created by GARY on 10/8/2015.
- */
 public class InvalidFilePath extends RuntimeException {
     public InvalidFilePath(String message) {
         super(message);

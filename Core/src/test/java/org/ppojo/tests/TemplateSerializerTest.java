@@ -23,7 +23,6 @@ import org.ppojo.data.*;
 import org.ppojo.trace.LoggingService;
 import org.ppojo.utils.ArrayListBuilder;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import static org.mockito.Mockito.mock;
@@ -62,7 +61,7 @@ public class TemplateSerializerTest {
 
     }
 
-    private static SchemaGraph newSimplePojoSchema() {
+    private static ArtifactGraph newSimplePojoSchema() {
 
         Schema schema = SchemaBuilder.newBuilder()
                 .addField(new SchemaField("FirstName", "String"))
@@ -81,10 +80,11 @@ public class TemplateSerializerTest {
         ArtifactOptions artifactOptions=new ArtifactOptions("test options newSimplePojoSchema",options,null);
         when(artifactParser.getOptions()).thenReturn(artifactOptions);
 
-        SchemaGraph schemaGraph=new SchemaGraph(ArrayListBuilder.newArrayList(file).create(),new LoggingService());
+        ArtifactGraph artifactGraph =new ArtifactGraph(ArrayListBuilder.newArrayList(file).create(),new LoggingService());
 
-        PojoArtifactBuilder.newBuilder(file,artifactParser).create();
-        return schemaGraph;
+        PojoArtifact pojoArtifact=new PojoArtifact(file,artifactParser,null,null);
+        file.addChildArtifact(pojoArtifact);
+        return artifactGraph;
 
 
     }

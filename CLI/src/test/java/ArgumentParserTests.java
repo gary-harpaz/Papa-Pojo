@@ -20,7 +20,6 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.ppojo.*;
-import org.ppojo.trace.ExecutingTemplateQuery;
 import org.ppojo.trace.LoggingService;
 
 import java.util.ArrayList;
@@ -52,8 +51,8 @@ public class ArgumentParserTests {
     @Test
     public void TestDefaultSearchQuery() throws ParseException {
         setNewCommandLine(new String[]{"-" + OptionNames.SOURCES, CLITests.TEST_ROOT_SOURCE_FOLDER1});
-        SchemaGraphParser schemaGraphParser= ArgumentsParser.getSchemaGraphParser(_loggingService, _line);
-        ArrayList<ITemplateFileQuery> queries= Lists.newArrayList(schemaGraphParser.getTemplateQueries());
+        parsingService parsingService = ArgumentsParser.getSchemaGraphParser(_loggingService, _line);
+        ArrayList<ITemplateFileQuery> queries= Lists.newArrayList(parsingService.getTemplateQueries());
         assertTrue("Expected a single default FolderTemplateFileQuery", queries != null && queries.size() == 1);
         assertTrue("Expected a query of type FolderTemplateFileQuery",queries.get(0) instanceof FolderTemplateFileQuery);
         FolderTemplateFileQuery query=(FolderTemplateFileQuery)queries.get(0);
@@ -66,8 +65,8 @@ public class ArgumentParserTests {
     public void TestFolderTemplateFileQueryArgs() throws ParseException {
         setNewCommandLine(new String[]{"-" + OptionNames.SOURCES, CLITests.TEST_ROOT_SOURCE_FOLDER1
         ,"-"+OptionNames.SEARCH,"r", CLITests.TEST_ROOT_SOURCE_FOLDER1,"-"+OptionNames.SEARCH,"nr",CLITests.TEST_ROOT_SOURCE_FOLDER2});
-        SchemaGraphParser schemaGraphParser= ArgumentsParser.getSchemaGraphParser(_loggingService, _line);
-        ArrayList<ITemplateFileQuery> queries= Lists.newArrayList(schemaGraphParser.getTemplateQueries());
+        parsingService parsingService = ArgumentsParser.getSchemaGraphParser(_loggingService, _line);
+        ArrayList<ITemplateFileQuery> queries= Lists.newArrayList(parsingService.getTemplateQueries());
 
     }
 

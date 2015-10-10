@@ -16,9 +16,17 @@
 
 package org.ppojo.data;
 
+import org.ppojo.*;
+
 /**
- * Created by GARY on 10/5/2015.
+ * Represents a deserialized {@link ArtifactTypes#FluentBuilder} artifact.
+ * @see FluentBuilderArtifact
+ * @see ArtifactTypes#FluentBuilder
  */
 public class FluentBuilderData extends ClassArtifactData {
+    /**
+     * The target class name for the builder (i.e. being created by the builder).
+     * This should correspond to an {@link ArtifactTypes#Pojo} artifact name.
+     */
     public String dataArtifact;
 }

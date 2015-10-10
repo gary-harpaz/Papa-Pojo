@@ -18,10 +18,10 @@ package org.ppojo.tests;
 
 import com.google.gson.JsonParseException;
 import org.junit.Test;
+import org.ppojo.parsingService;
 import org.ppojo.utils.ArrayListBuilder;
 import org.ppojo.FolderTemplateFileQuery;
 import org.ppojo.ITemplateFileQuery;
-import org.ppojo.SchemaGraphParser;
 import org.ppojo.exceptions.RequiredPropertyMissing;
 import org.ppojo.utils.Helpers;
 import org.ppojo.trace.ILoggingService;
@@ -50,10 +50,10 @@ public class ArtifactValidationTests {
         String rootQueryFolder= SchemaTestResources.getValidationTestQueryRootFolder(queryRootReltaiveFolder);
         FolderTemplateFileQuery query=new FolderTemplateFileQuery(rootQueryFolder);
         ILoggingService loggingService=new LoggingService();
-        SchemaGraphParser schemaGraphParser=new SchemaGraphParser(
+        parsingService parsingService =new parsingService(
                 ArrayListBuilder.newArrayList(Helpers.getResourcePath(SchemaTestResources.MainValidationTestSourcesFolder).toString()).create(),
                 ArrayListBuilder.<ITemplateFileQuery>newArrayList(query).create(),
                 ArtifactConstructionTest.getDefaultOptions(),loggingService);
-        schemaGraphParser.generateArtifacts();
+        parsingService.generateArtifacts();
     }
 }

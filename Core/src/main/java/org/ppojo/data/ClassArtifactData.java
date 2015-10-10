@@ -15,9 +15,12 @@
  */
 
 package org.ppojo.data;
+import org.ppojo.*;
 
 /**
- * Created by GARY on 9/28/2015.
+ * Represents a deserialized {@link ArtifactTypes#Pojo} artifact.
+ * @see PojoArtifact
+ * @see ArtifactTypes#Pojo
  */
 public class ClassArtifactData extends ArtifactData {
     public String extend;

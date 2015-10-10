@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Created by GARY on 9/30/2015.
+ * Contains information about each artifact type, used for validation of properties and options specified in templates.
  */
 public class ArtifactMetaData {
 
@@ -99,19 +99,13 @@ public class ArtifactMetaData {
         NewMetaData(ArtifactTypes.FluentBuilder,FluentBuilderData.class,supportsOptions);
     }
 
-
-
-    public static void Init() {
-
-    }
-
     public static void NewMetaData(ArtifactTypes artifactTypes,Class<? extends ArtifactData> artifactClass,Set<ArtifactOptions.Fields> supportsOptions) {
         ArtifactMetaData artifactMetaData=new ArtifactMetaData(artifactTypes,artifactClass,supportsOptions);
         _metaDatas.put(artifactTypes, artifactMetaData);
     }
 
-    ArtifactMetaData(ArtifactTypes artifactTypes,Class<? extends ArtifactData> artifactClass,Set<ArtifactOptions.Fields> supportsOptions) {
-        _artifactTypes=artifactTypes;
+    ArtifactMetaData(ArtifactTypes artifactType,Class<? extends ArtifactData> artifactClass,Set<ArtifactOptions.Fields> supportsOptions) {
+        _artifactType = artifactType;
         _artifactClass=artifactClass;
         _supportsOptions=supportsOptions;
         _extendedFields =new HashMap<>();
@@ -135,19 +129,29 @@ public class ArtifactMetaData {
         }
     }
 
-
-    private final ArtifactTypes _artifactTypes;
+    private final ArtifactTypes _artifactType;
     private final Class<? extends ArtifactData> _artifactClass;
     private final Map<String,Field> _extendedFields;
     private final Set<ArtifactOptions.Fields> _supportsOptions;
+
+    /**
+     * @return The target class for deserializing the {@link ArtifactTypes ArtifactType} returned by {@link ArtifactMetaData#getArtifactType()}
+     */
+    public Class<? extends ArtifactData> getArtifactClass() {
+        return _artifactClass;
+    }
+    /**
+     * Every artifact type supports a different set of options that can be applied to it. During deserialization if unrecognized options are applied to the artifact
+     * an exception is thrown.
+     * @return The {@link org.ppojo.ArtifactOptions.Fields ArtifactOptions} applicable to the {@link ArtifactTypes ArtifactType} returned by {@link ArtifactMetaData#getArtifactType()}
+     */
     public Iterable<ArtifactOptions.Fields> getSupportedOptions() {
         return _supportsOptions;
     }
 
-    public ArtifactTypes getArtifactTypes() {
-        return _artifactTypes;
+    public ArtifactTypes getArtifactType() {
+        return _artifactType;
     }
-
 
     public static void validateArtifactProperty(ArtifactMetaData artifactMetaData, String propertyName, JsonElementTypes elementType
             ,String artifactName,String templateFilePath) {
@@ -155,21 +159,21 @@ public class ArtifactMetaData {
         if (field==null) {
             field=artifactMetaData._extendedFields.get(propertyName);
             if (field==null)
-                throw new UnsupportedArtifactProperty(propertyName,artifactMetaData.getArtifactTypes(),artifactName,templateFilePath);
+                throw new UnsupportedArtifactProperty(propertyName,artifactMetaData.getArtifactType(),artifactName,templateFilePath);
         }
         JsonElementTypes expectedElementType=Serializer.validateJsonSupportedField(field);
         if (expectedElementType!=elementType)
-            throw new ArtifactElementTypeMismatch(propertyName,artifactMetaData.getArtifactTypes(),expectedElementType,elementType,artifactName,templateFilePath);
+            throw new ArtifactElementTypeMismatch(propertyName,artifactMetaData.getArtifactType(),expectedElementType,elementType,artifactName,templateFilePath);
     }
 
 
     public static void validateOptionsProperty(ArtifactMetaData artifactMetaData, ArtifactOptions.Fields optionsProperty, JsonElementTypes elementType,
                                                String artifactName, String templateFilePath) {
         if (!artifactMetaData.isOptionSupported(optionsProperty))
-            throw new UnsupportedArtifactProperty(optionsProperty.toString(),artifactMetaData.getArtifactTypes(),artifactName,templateFilePath);
+            throw new UnsupportedArtifactProperty(optionsProperty.toString(),artifactMetaData.getArtifactType(),artifactName,templateFilePath);
         JsonElementTypes expectedElementType=Serializer.validateJsonSupportedOption(optionsProperty, artifactMetaData.getClass());
         if (expectedElementType!=elementType)
-            throw new ArtifactElementTypeMismatch(optionsProperty.toString(),artifactMetaData.getArtifactTypes(),expectedElementType,elementType,artifactName,templateFilePath);
+            throw new ArtifactElementTypeMismatch(optionsProperty.toString(),artifactMetaData.getArtifactType(),expectedElementType,elementType,artifactName,templateFilePath);
 
     }
 

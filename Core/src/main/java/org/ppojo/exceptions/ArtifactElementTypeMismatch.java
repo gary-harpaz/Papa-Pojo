@@ -19,9 +19,6 @@ package org.ppojo.exceptions;
 import org.ppojo.ArtifactTypes;
 import org.ppojo.data.JsonElementTypes;
 
-/**
- * Created by GARY on 9/30/2015.
- */
 public class ArtifactElementTypeMismatch extends RuntimeException {
     public ArtifactElementTypeMismatch(String message) {
         super(message);

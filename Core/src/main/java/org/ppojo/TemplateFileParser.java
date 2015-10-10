@@ -16,7 +16,7 @@
 
 package org.ppojo;
 
-import org.ppojo.data.TemplateFileData;
+import org.ppojo.data.*;
 import org.ppojo.utils.Helpers;
 import org.ppojo.utils.ValidationResult;
 
@@ -25,9 +25,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+
 /**
- * Created by GARY on 9/25/2015.
+ * Contains logic for parsing, validating and resolving raw deserialized {@link TemplateFileData}.
+ * @see ArtifactParser
  */
+
 public class TemplateFileParser {
 
     public TemplateFileParser(String filePath,TemplateFileData rawData,ArtifactOptions defaultOptions) {
@@ -86,7 +89,7 @@ public class TemplateFileParser {
         return _options;
     }
 
-    public boolean validateTemplate(SchemaGraphParser schemaGraphParser, ValidationResult validationResult) {
+    public boolean validateTemplate(parsingService parsingService, ValidationResult validationResult) {
         int initialErrorSize = validationResult.getErrors().size();
         if (_wasValidateInvoked)
             return !_isValid;
@@ -98,10 +101,10 @@ public class TemplateFileParser {
                 validateSchemaSource(validationResult);
                 break;
             case SchemaLink:
-                validateSchemaLink(schemaGraphParser, validationResult);
+                validateSchemaLink(parsingService, validationResult);
                 break;
             case SubSchema:
-                validateSubSchema(schemaGraphParser, validationResult);
+                validateSubSchema(parsingService, validationResult);
                 break;
             case OptionsConfig:
                 //TODO how to validate options config
@@ -195,7 +198,7 @@ public class TemplateFileParser {
         }
         _schema=schema;
     }
-    private void validateSubSchema(SchemaGraphParser schemaGraphParser, ValidationResult validationResult) {
+    private void validateSubSchema(parsingService parsingService, ValidationResult validationResult) {
         if (_rawData.fields!=null)
             validationResult.addError("Template can not define schema fields and also define sub template fields in "+_filePath);
         if (_rawData.subTemplateFields.length==0)
@@ -203,7 +206,7 @@ public class TemplateFileParser {
         if (Helpers.IsNullOrEmpty(_rawData.linkTo))
             validationResult.addError("Invalid sub template definition in "+_filePath+". Sub template must be linked to source template");
         else {
-            _linkedTemplate=resolveLink(schemaGraphParser,validationResult);
+            _linkedTemplate=resolveLink(parsingService,validationResult);
             if (_linkedTemplate!=null && _linkedTemplate.isValid()) {
                 switch (_linkedTemplate.getSchemaRelationType()) {
                     case SchemaSource:
@@ -222,23 +225,23 @@ public class TemplateFileParser {
         }
     }
 
-    private TemplateFileParser resolveLink(SchemaGraphParser schemaGraphParser, ValidationResult validationResult) {
+    private TemplateFileParser resolveLink(parsingService parsingService, ValidationResult validationResult) {
         TemplateFileParser linkedTemplate;
         String absoluteLink= Paths.get(_filePath).getParent().resolve(_rawData.linkTo).normalize().toString();
-        linkedTemplate= schemaGraphParser.getAllTemplates().get(absoluteLink);
+        linkedTemplate= parsingService.getAllTemplates().get(absoluteLink);
         if (linkedTemplate==null)
             validationResult.addError("Invalid template link :"+absoluteLink+ " in "+_filePath+". Template could not be found.");
         else {
             if (!linkedTemplate.wasValidateInvoked())
-                linkedTemplate.validateTemplate(schemaGraphParser,validationResult);
+                linkedTemplate.validateTemplate(parsingService,validationResult);
             if (!linkedTemplate.isValid())
                 validationResult.addError("Invalid template in "+_filePath+". Template is indirectly invalid since it link to an invalid template "+linkedTemplate.getFilePath());
         }
         return linkedTemplate;
     }
 
-    private void validateSchemaLink(SchemaGraphParser schemaGraphParser, ValidationResult validationResult) {
-        _linkedTemplate=resolveLink(schemaGraphParser,validationResult);
+    private void validateSchemaLink(parsingService parsingService, ValidationResult validationResult) {
+        _linkedTemplate=resolveLink(parsingService,validationResult);
         if (_linkedTemplate!=null && _linkedTemplate.isValid()) {
             switch (_linkedTemplate.getSchemaRelationType()) {
                 case SchemaSource:
@@ -263,13 +266,13 @@ public class TemplateFileParser {
             validationResult.addError("Template must define at least one field in "+_filePath);
     }
 
-    public boolean validateArtifacts(SchemaGraphParser schemaGraphParser, ValidationResult validationResult) {
+    public boolean validateArtifacts(parsingService parsingService, ValidationResult validationResult) {
         if (!isValid() || _rawData.artifacts==null) //Template itself is not valid so all artifacts are invalid
             return !isValid();
         int initialErrorSize=validationResult.getErrors().size();
         _artifactParsers= Arrays.stream(_rawData.artifacts).map(a->new ArtifactParser(this,a)).collect(Collectors.toList());
         for (ArtifactParser artifactParser : _artifactParsers) {
-            artifactParser.validateArtifact(schemaGraphParser,validationResult);
+            artifactParser.validateArtifact(parsingService,validationResult);
         }
         return validationResult.getErrors().size()>initialErrorSize;
     }

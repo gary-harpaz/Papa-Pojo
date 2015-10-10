@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by GARY on 10/6/2015.
+ * Parses the user command line arguments, and validates them. Returns a command to be executen in the {@link Main} class.
  */
 public class ArgumentsParser {
     public static Runnable Parse(Options options, String[] args,ILoggingService loggingService) throws ParseException {
@@ -40,18 +40,18 @@ public class ArgumentsParser {
             return ()->HelpPrinter.print(options);
         if (!line.hasOption(OptionNames.SOURCES))
             throw new ParseException("Missing required option sources");
-        SchemaGraphParser schemaGraphParser = getSchemaGraphParser(loggingService, line);
+        parsingService parsingService = getSchemaGraphParser(loggingService, line);
         boolean listOption=line.hasOption(OptionNames.LIST);
         if (!line.hasOption(OptionNames.CLEAN))
             if (!listOption)
-                return ()->schemaGraphParser.generateArtifacts();
+                return ()-> parsingService.generateArtifacts();
             else
-                return ()->schemaGraphParser.listMatchedTemplates();
+                return ()-> parsingService.listMatchedTemplates();
         else
-            return ()->schemaGraphParser.cleanArtifacts(listOption);
+            return ()-> parsingService.cleanArtifacts(listOption);
     }
 
-    public static SchemaGraphParser getSchemaGraphParser(ILoggingService loggingService, CommandLine line) throws ParseException {
+    public static parsingService getSchemaGraphParser(ILoggingService loggingService, CommandLine line) throws ParseException {
         ArrayList<String> sourcesFolders=parseSourceFolders(line);
         ArrayList<ITemplateFileQuery> queries=new ArrayList<>();
         if (!definesQueries(line)) {
@@ -62,7 +62,7 @@ public class ArgumentsParser {
         }
         parseSearchQueries(line,queries);
         parseTemplateFileArgs(line,queries);
-        return new SchemaGraphParser(sourcesFolders,queries, ArtifactOptions.getDefaultOptions(),loggingService);
+        return new parsingService(sourcesFolders,queries, ArtifactOptions.getDefaultOptions(),loggingService);
     }
 
     private static boolean definesQueries(CommandLine line) {

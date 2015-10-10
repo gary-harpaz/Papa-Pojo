@@ -17,7 +17,8 @@
 package org.ppojo;
 
 /**
- * Created by GARY on 9/26/2015.
+ * Interface for abstracting {@link ArtifactBase#getArtifactParent()}. Regular artifacts have an {@link ArtifactFile} parent.
+ * Nested artifacts have {@link ArtifactBase} parent.
  */
 public interface IArtifactParent {
     ArtifactOptions getOptions();

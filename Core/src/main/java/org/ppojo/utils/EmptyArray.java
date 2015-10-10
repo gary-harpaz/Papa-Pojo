@@ -20,7 +20,9 @@ import java.lang.reflect.Array;
 import java.util.HashMap;
 
 /**
- * Created by GARY on 10/3/2015.
+ * Cache of empty arrays by item class. This is used by functions that return an array type.
+ * Since all these items are immutable it is preferable to return a cached empty array
+ * instead of a null return value or to create an empty array every time a function call returns without results.
  */
 public class EmptyArray {
 

@@ -22,7 +22,9 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 
 /**
- * Created by GARY on 9/28/2015.
+ * Helper class for parsing enum values represented as Strings. The {@link EnumParser#TryParse} method will return
+ * the unknown value, which can be set to null, in case the value does not translate to a valid enum member
+ * instead of throwing an exception like Enum.valueOf.
  */
 public class EnumParser<T> {
 

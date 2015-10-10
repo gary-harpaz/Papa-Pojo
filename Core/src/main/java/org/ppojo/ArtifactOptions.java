@@ -24,9 +24,11 @@ import javax.annotation.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import org.ppojo.*;
 
 /**
- * Created by GARY on 9/23/2015.
+ * Extends the {@link MapChain} infrastructure class with logic specific for customizing artifact generation.
+ * All available options are enumerated by {@link ArtifactOptions.Fields} and exposed via type safe member methods.
  */
 public class ArtifactOptions extends MapChain {
 
@@ -165,6 +167,9 @@ public class ArtifactOptions extends MapChain {
         return getValue(Fields.fluentGetDataName);
     }
 
+    /**
+     * All available options for customizing artifact code generation. See the wiki for details about them.
+     */
     public enum Fields {
         Unknown(null),
         imports(String[].class),

@@ -16,10 +16,20 @@
 
 package org.ppojo.data;
 
+import org.ppojo.*;
+
 /**
- * Created by GARY on 9/28/2015.
+ * Represents a deserialized {@link ArtifactTypes#Interface} artifact.
+ * @see InterfaceArtifact
+ * @see ArtifactTypes#Interface
  */
 public class InterfaceArtifactData extends ArtifactData {
+    /**
+     * If set the generated interface will extend this interface.
+     */
     public String extend;
+    /**
+     *If true only getters will be generated for this interface. Otherwise both getters and setters will be generated.
+     */
     public boolean isReadOnly;
 }

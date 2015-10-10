@@ -21,11 +21,11 @@ import org.ppojo.utils.Helpers;
 import javax.annotation.Nonnull;
 import java.io.BufferedWriter;
 import java.io.IOException;
-
-import static org.ppojo.utils.Helpers.EmptyIfNull;
+import org.ppojo.data.*;
 
 /**
- * Created by GARY on 9/28/2015.
+ * Represents a resolved {@link ArtifactTypes#Interface} artifact.
+ * @see InterfaceArtifactData
  */
 public class InterfaceArtifact extends ArtifactBase{
 

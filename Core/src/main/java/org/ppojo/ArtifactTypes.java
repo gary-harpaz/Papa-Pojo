@@ -21,7 +21,7 @@ import org.ppojo.utils.EnumParser;
 import javax.annotation.Nonnull;
 
 /**
- * Created by GARY on 9/23/2015.
+ * Enumerates the various artifact types supported by the papa pojo engine. See the wiki for more details and examples of artifact types.
  */
 public enum ArtifactTypes {
     Unknown,

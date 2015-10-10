@@ -16,9 +16,6 @@
 
 package org.ppojo.trace;
 
-/**
- * Created by GARY on 10/7/2015.
- */
 public class ValidatedSourceFolderPath extends FileTraceEventBase {
 
     public ValidatedSourceFolderPath(String path) {

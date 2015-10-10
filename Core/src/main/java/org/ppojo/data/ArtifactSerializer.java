@@ -17,7 +17,7 @@
 package org.ppojo.data;
 
 import com.google.gson.*;
-import org.ppojo.ArtifactOptions;
+import org.ppojo.*;
 import org.ppojo.ArtifactTypes;
 import org.ppojo.exceptions.EnumParseException;
 import org.ppojo.exceptions.InvalidArtifactType;
@@ -29,7 +29,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by GARY on 9/30/2015.
+ * Responsible for deserializing and validating JSON elements of artifacts to corresponding {@link ArtifactData}
+ * @see Serializer
+ * @see TemplateSerializer
+ * @see CopyStyleDataSerializer
  */
 public class ArtifactSerializer  implements JsonDeserializer<ArtifactData> {
 
@@ -89,28 +92,8 @@ public class ArtifactSerializer  implements JsonDeserializer<ArtifactData> {
                 }
             }
         }
-
-
-        ArtifactData result; //TODO user artifact meta data instead of switch
-        switch (artifactTypes) {
-            case Pojo:
-                result= _gson.fromJson(json,ClassArtifactData.class);
-                break;
-            case Interface:
-                result= _gson.fromJson(json,InterfaceArtifactData.class);
-                break;
-            case FieldEnum:
-                result= _gson.fromJson(json,FieldEnumArtifactData.class);
-                break;
-            case ImmutableClass:
-                result=_gson.fromJson(json,ImmutableClassData.class);
-                break;
-            case FluentBuilder:
-                result=_gson.fromJson(json,FluentBuilderData.class);
-                break;
-            default:
-                throw new InvalidArtifactType("Unsupported artifact type "+type+" in "+artifactName+" template "+ getDeserializeFilePath());
-        }
+        ArtifactData result;
+        result=_gson.fromJson(json,artifactMetaData.getArtifactClass());
         result.options=localOptions;
         return result;
     }

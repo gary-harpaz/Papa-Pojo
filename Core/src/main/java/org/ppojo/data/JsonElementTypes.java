@@ -20,7 +20,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
 
 /**
- * Created by GARY on 9/30/2015.
+ * Helper enum for classifying {@link JsonElement} types used in Gson library.
  */
 public enum JsonElementTypes {
     Unknown,

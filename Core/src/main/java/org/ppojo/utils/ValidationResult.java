@@ -20,7 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by GARY on 9/25/2015.
+ * Aggregates validation errors and warnings during artifact generation.
+ * @see ValidationError
+ * @see ValidationWarning
  */
 public class ValidationResult {
     private final List<ValidationWarning> _warnings;

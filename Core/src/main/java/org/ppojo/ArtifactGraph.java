@@ -36,13 +36,16 @@ import java.nio.file.Paths;
 import java.util.*;
 
 /**
- * Created by GARY on 9/26/2015.
+ * This is the top level object representing the main result of the {@link parsingService} after parsing, validating and resolving the templates.
+ * It is a graph of connected objected containing {@link ArtifactFile} files, their child {@link ArtifactBase} objects that are also linked to
+ * their dependant artifacts. The graph method {@link ArtifactGraph#produceArtifactFiles()} kicks off the process of outputting the generated source code
+ * top down iterating all objects in the graph.
  */
-public class SchemaGraph {
+public class ArtifactGraph {
     private final Iterable<ArtifactFile> _artifactFiles;
     private final ILoggingService _loggingService;
     private final ArrayList<ArtifactBase> _debugOptionsArtifacts=new ArrayList<>();
-    public SchemaGraph(Iterable<ArtifactFile> artifactFiles,ILoggingService loggingService) {
+    public ArtifactGraph(Iterable<ArtifactFile> artifactFiles, ILoggingService loggingService) {
         _artifactFiles=artifactFiles;
         _loggingService=loggingService;
     }

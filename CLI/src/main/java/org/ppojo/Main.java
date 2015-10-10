@@ -22,7 +22,7 @@ import org.ppojo.trace.ILoggingService;
 import org.ppojo.trace.LoggingService;
 
 /**
- * Created by GARY on 10/6/2015.
+ * Main CLI entry point
  */
 public class Main {
 

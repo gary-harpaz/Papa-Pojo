@@ -16,9 +16,6 @@
 
 package org.ppojo.trace;
 
-/**
- * Created by GARY on 10/8/2015.
- */
 public class CreatedArtifactFile extends FileTraceEventBase {
 
     public CreatedArtifactFile(String path) {

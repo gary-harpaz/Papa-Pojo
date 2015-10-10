@@ -16,8 +16,11 @@
 
 package org.ppojo;
 
+import org.ppojo.data.*;
+
 /**
- * Created by GARY on 9/25/2015.
+ * Enumerates the options for defining template files in papa pojo. See the wiki for information about the possible types.
+ * @see TemplateFileData
  */
 public enum TemplateSchemaRelationTypes {
     Unknown,

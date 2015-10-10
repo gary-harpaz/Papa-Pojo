@@ -27,7 +27,7 @@ import java.util.Arrays;
 import static org.ppojo.utils.Helpers.as;
 
 /**
- * Created by GARY on 9/26/2015.
+ * Base class for representing a resolved class artifact.
  */
 public abstract class ClassArtifactBase extends ArtifactBase {
 

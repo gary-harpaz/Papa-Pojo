@@ -19,7 +19,8 @@ package org.ppojo;
 import org.ppojo.utils.EnumParser;
 
 /**
- * Created by GARY on 10/3/2015.
+ * Enumerates the possible copy styles that can be applied to {@link ArtifactTypes#Pojo} artifact. For information about the
+ * possible styles see the wiki.
  */
 public enum CopyStyleTypes {
     staticMethod("copy",false),

@@ -19,7 +19,7 @@ package org.ppojo.utils;
 import java.util.ArrayList;
 
 /**
- * Created by GARY on 9/27/2015.
+ * Helper class for constructing array lists using a fluent API.
  */
 public class ArrayListBuilder<T> {
 

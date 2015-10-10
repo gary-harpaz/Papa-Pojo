@@ -24,7 +24,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Created by GARY on 10/4/2015.
+ * Contains logic for formatting {@link ArtifactTypes#Pojo} copy styles.
+ * @see CopyStyleData
+ * @see CopyStyleTypes
  */
 public abstract class CopyStyleFormatter {
     abstract void writeMethodDeclaration(PojoArtifact pojoArtifact,String methodName, BufferedWriter bufferedWriter) throws IOException;

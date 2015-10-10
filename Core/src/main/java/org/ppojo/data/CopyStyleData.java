@@ -17,11 +17,17 @@
 package org.ppojo.data;
 
 import org.ppojo.CopyStyleTypes;
+import org.ppojo.*;
 
 /**
- * Created by GARY on 10/3/2015.
+ * Represents a copy style that can be applied to an artifact of type {@link ArtifactTypes#Pojo}
+ * @see CopyStyleTypes
+ * @see CopyStyleDataSerializer
  */
 public class CopyStyleData {
     public CopyStyleTypes style;
+    /**
+     * The name of the method that will be created when the style is applied
+     */
     public String methodName;
 }

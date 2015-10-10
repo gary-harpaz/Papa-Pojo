@@ -18,9 +18,6 @@ package org.ppojo.exceptions;
 
 import org.ppojo.ArtifactTypes;
 
-/**
- * Created by GARY on 9/30/2015.
- */
 public class UnsupportedArtifactProperty extends RuntimeException {
     public UnsupportedArtifactProperty(String message) {
         super(message);
