@@ -58,7 +58,7 @@ public class FolderTemplateFileQuery implements ITemplateFileQuery {
     }
 
     public FolderTemplateFileQuery(String path,String fileFilter,boolean isRecursive) {
-        _path=path;
+        _path=Paths.get(path).toAbsolutePath().normalize().toString();
         if (IsNullOrEmpty(fileFilter))
             fileFilter=getDefaultFileFilter();
         _fileFilter=fileFilter;

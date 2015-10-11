@@ -348,7 +348,7 @@ public class parsingService {
         for (String rootSourceFolder : _rootSourceFolders) {
             Path path=Paths.get(rootSourceFolder).normalize();
             if (!path.isAbsolute()) {
-                path=path.toAbsolutePath();
+                path=path.toAbsolutePath().normalize();
             }
             File file=path.toFile();
             if (!file.exists())
