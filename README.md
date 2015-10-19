@@ -22,7 +22,7 @@ They are completely different. Other template engines out there are all purpose 
 #### What happens if I want custom methods or fields, then I'm stuck right?
 Not really. You can use Papa Pojo to create base classes and extend them with your own functionality. Also by overriding the base class methods you can completely customize the generated code to do whatever you need it to do.
 #### I'm still not convinced.
-Maybe you should take a look at a simple __[Template Example](https://github.com/gary-harpaz/Papa-Pojo/wiki/Example)__, or perhaps you just lack the proper __[Motivation(https://github.com/gary-harpaz/Papa-Pojo/wiki/Motivation)]__?
+Maybe you should take a look at a simple __[Template Example](https://github.com/gary-harpaz/Papa-Pojo/wiki/Example)__, or perhaps you just lack the proper __[Motivation](https://github.com/gary-harpaz/Papa-Pojo/wiki/Motivation)__?
 ## Project ##
 #### Author ####
 [Gary Harpaz](https://github.com/gary-harpaz)
