@@ -22,6 +22,7 @@ import org.junit.Test;
 import org.ppojo.*;
 import org.ppojo.trace.LoggingService;
 
+import java.nio.file.Paths;
 import java.util.ArrayList;
 
 import static org.junit.Assert.assertTrue;
@@ -57,7 +58,7 @@ public class ArgumentParserTests {
         assertTrue("Expected a query of type FolderTemplateFileQuery",queries.get(0) instanceof FolderTemplateFileQuery);
         FolderTemplateFileQuery query=(FolderTemplateFileQuery)queries.get(0);
         assertTrue("Expected a recursive query", query.isRecursive());
-        assertTrue("Expected the folder query to contain the TEST_ROOT_SOURCE_FOLDER1 path",query.getPath().contains(CLITests.TEST_ROOT_SOURCE_FOLDER1));
+        assertTrue("Expected the folder query to contain the TEST_ROOT_SOURCE_FOLDER1 path",query.getPath().contains(Paths.get(CLITests.TEST_ROOT_SOURCE_FOLDER1).toString()));
 
 
     }
